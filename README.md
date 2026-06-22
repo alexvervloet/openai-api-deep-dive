@@ -211,8 +211,8 @@ cost change.
 
 ## 8. Beyond the basics
 
-With the core down, here are four of the most useful next capabilities — each is
-a runnable example in the same numbered style. Every one is still just a variation
+With the core down, here are the most useful next capabilities — each is a
+runnable example in the same numbered style. Every one is still just a variation
 on "send messages, get a message."
 
 ### Streaming — get the answer as it's typed
@@ -247,6 +247,23 @@ words* with it.
 python examples/11_embeddings.py
 ```
 
+### Multi-turn conversations — the API has no memory
+Each request is stateless: the model remembers nothing. A chatbot that "remembers"
+is just *you* re-sending the whole `messages` list every turn, appending each new
+user and assistant message. The example is a tiny REPL that grows that list.
+```bash
+python examples/12_conversation.py
+```
+
+### Error handling & retries — surviving the real world
+The network blips, you hit a rate limit, a model name has a typo. The SDK already
+retries transient failures (429/5xx/connection) with backoff; your job is to tune
+`timeout`/`max_retries` and catch the *typed* exceptions so "fix your request"
+errors are handled differently from "try again later" ones.
+```bash
+python examples/13_error_handling.py
+```
+
 ---
 
 ## Where to go next
@@ -255,8 +272,9 @@ You've now covered the essentials and the most common extensions. Further on:
 
 - **Retrieval-augmented generation (RAG)** — combine embeddings (Section 8) with
   chat to answer questions over your own documents.
-- **The context window** — what happens as conversations get long, and how to
-  manage / trim history.
+- **The context window** — what happens as conversations get long, and smarter
+  ways to manage history than the simple trim in example 12 (summarizing old
+  turns, sliding windows).
 - **Vision & audio** — passing images to multimodal models, speech-to-text.
 - **Streaming + tools together** — the pattern most production assistants use.
 
@@ -284,6 +302,8 @@ examples/
   09_structured_outputs.py  ← guaranteed JSON / schema-conformant output
   10_function_calling.py    ← let the model call your functions
   11_embeddings.py          ← vectors & semantic similarity
+  12_conversation.py        ← multi-turn chat & the stateless API
+  13_error_handling.py      ← timeouts, retries & typed exceptions
 ```
 
 ---
