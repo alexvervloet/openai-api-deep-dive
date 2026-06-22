@@ -1,0 +1,9 @@
+# The official OpenAI Python SDK (v1.x). This is the `from openai import OpenAI` style.
+openai>=1.30.0
+
+# tiktoken is OpenAI's tokenizer. We use it to count tokens *before* sending a
+# request, so we can estimate cost and avoid surprises.
+tiktoken>=0.7.0
+
+# Loads variables from a .env file (like OPENAI_API_KEY) into the environment.
+python-dotenv>=1.0.0
