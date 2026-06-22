@@ -31,6 +31,7 @@ import sys
 
 from dotenv import load_dotenv
 from openai import OpenAI
+from openai.types.chat import ChatCompletionMessageParam, ChatCompletionToolParam
 
 load_dotenv()
 if not os.getenv("OPENAI_API_KEY"):
@@ -48,7 +49,7 @@ def get_current_weather(city: str) -> dict:
 
 
 # --- Step 1: describe the tool to the model. ---
-tools = [
+tools: list[ChatCompletionToolParam] = [
     {
         "type": "function",
         "function": {
@@ -66,7 +67,9 @@ tools = [
     }
 ]
 
-messages = [{"role": "user", "content": "What's the weather like in Tokyo?"}]
+messages: list[ChatCompletionMessageParam] = [
+    {"role": "user", "content": "What's the weather like in Tokyo?"}
+]
 
 # First call: the model decides it needs the tool.
 first = client.chat.completions.create(
@@ -79,9 +82,17 @@ reply = first.choices[0].message
 # --- Step 2 & 3: the model asked for tool calls; we run them. ---
 # Append the model's tool-call message to the history first — the API requires
 # every tool result to follow the assistant message that requested it.
-messages.append(reply)
+# `reply` is a *response* object (ChatCompletionMessage), not a request param
+# dict — the API accepts it back as-is at runtime, but the two types differ, so
+# we silence that one inherent request/response mismatch.
+messages.append(reply)  # type: ignore[arg-type]
 
 for call in reply.tool_calls or []:
+    # `tool_calls` is a union — a call can be a "function" call or a "custom"
+    # one. We only registered a function tool, so narrow to that variant; this
+    # also tells the type checker `.function` is safe to access.
+    if call.type != "function":
+        continue
     args = json.loads(call.function.arguments)
     print(f"[model requested: {call.function.name}({args})]")
     result = get_current_weather(**args)
@@ -98,4 +109,4 @@ second = client.chat.completions.create(
     messages=messages,
     tools=tools,
 )
-print("\n" + second.choices[0].message.content)
+print("\n" + (second.choices[0].message.content or ""))

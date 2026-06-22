@@ -285,3 +285,30 @@ examples/
   10_function_calling.py    ← let the model call your functions
   11_embeddings.py          ← vectors & semantic similarity
 ```
+
+---
+
+<sub>
+
+**Footnote — quieting Pylance/type-checker noise.** Two patterns trip the type
+checker repeatedly with the OpenAI SDK. Pre-empt them and new files stay clean:
+
+1. **Assigning `messages` / `tools` to a variable** (rather than passing the
+   literal straight into `create()`) makes Pylance infer a too-narrow type like
+   `list[dict[str, str]]`. Annotate with the SDK's own param types — you also get
+   key autocomplete:
+   ```python
+   from openai.types.chat import ChatCompletionMessageParam, ChatCompletionToolParam
+   messages: list[ChatCompletionMessageParam] = [...]
+   tools: list[ChatCompletionToolParam] = [...]
+   ```
+2. **`.content` is typed `str | None`** (it's `None` when the model returns only
+   tool calls). `print()` and f-strings accept it, but `json.loads()` and `+`
+   concatenation don't — guard with `... or ""` / `... or "{}"`.
+
+The repo's [.vscode/settings.json](.vscode/settings.json) also sets
+`python.analysis.typeCheckingMode` to `basic`, which keeps the useful checks
+(undefined names, bad attrs/args) while dropping the strict dict-vs-TypedDict
+complaints.
+
+</sub>

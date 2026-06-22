@@ -88,7 +88,10 @@ response = client.chat.completions.create(
 )
 
 # Guaranteed valid JSON matching our schema — safe to parse and use as a dict.
-data = json.loads(response.choices[0].message.content)
+# `.content` is typed `str | None` (it's None when the model returns only tool
+# calls), so we fall back to "{}" to keep both the runtime and the type checker
+# happy.
+data = json.loads(response.choices[0].message.content or "{}")
 
 print(f"Language: {data['language']}")
 print(f"Summary:  {data['summary']}")

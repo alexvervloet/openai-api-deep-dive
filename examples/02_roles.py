@@ -26,6 +26,7 @@ import sys
 
 from dotenv import load_dotenv
 from openai import OpenAI
+from openai.types.chat import ChatCompletionMessageParam
 
 load_dotenv()
 if not os.getenv("OPENAI_API_KEY"):
@@ -36,7 +37,7 @@ client = OpenAI()
 # Note the assistant message in the middle: we're *simulating* a prior turn so
 # the model continues the thread coherently. This is how you build multi-turn
 # chat — keep appending messages to the list.
-messages = [
+messages: list[ChatCompletionMessageParam] = [
     {"role": "system", "content": "You are a terse math tutor. One line only."},
     {"role": "user", "content": "What is 12 * 12?"},
     {"role": "assistant", "content": "144."},
