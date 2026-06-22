@@ -209,17 +209,56 @@ cost change.
 
 ---
 
+## 8. Beyond the basics
+
+With the core down, here are four of the most useful next capabilities — each is
+a runnable example in the same numbered style. Every one is still just a variation
+on "send messages, get a message."
+
+### Streaming — get the answer as it's typed
+With `stream=True` the response arrives in small chunks as it's generated, so the
+user sees text appear immediately instead of waiting for the whole thing.
+```bash
+python examples/08_streaming.py
+```
+
+### Structured outputs — make the model return real JSON
+Force the reply to be valid JSON, or even match an exact schema you define
+(`response_format` with `"strict": True`). The end of fragile "please reply in
+JSON" prompting.
+```bash
+python examples/09_structured_outputs.py
+```
+
+### Function / tool calling — let the model use your code
+You describe functions; the model decides when to call one and with what
+arguments; *you* run it and feed the result back. This is how a model gets to
+actually *do* things (query a DB, hit an API).
+```bash
+python examples/10_function_calling.py
+```
+
+### Embeddings — turn text into vectors for search & similarity
+A different endpoint (`client.embeddings.create`) that converts text into numbers
+capturing meaning. The foundation of semantic search and retrieval (RAG). The
+example ranks sentences by similarity to a query — including ones that share *no
+words* with it.
+```bash
+python examples/11_embeddings.py
+```
+
+---
+
 ## Where to go next
 
-You now understand the core. Natural next steps for the deep dive:
+You've now covered the essentials and the most common extensions. Further on:
 
-- **Streaming** — get tokens as they're generated (`stream=True`) instead of
-  waiting for the whole answer.
-- **Structured outputs / JSON mode** — force the model to return valid JSON.
-- **Function / tool calling** — let the model call your code.
-- **Embeddings** — turn text into vectors for search and similarity.
+- **Retrieval-augmented generation (RAG)** — combine embeddings (Section 8) with
+  chat to answer questions over your own documents.
 - **The context window** — what happens as conversations get long, and how to
-  manage history.
+  manage / trim history.
+- **Vision & audio** — passing images to multimodal models, speech-to-text.
+- **Streaming + tools together** — the pattern most production assistants use.
 
 Each of these slots neatly on top of the "send messages, get a message" idea you
 started with.
@@ -241,4 +280,8 @@ examples/
   05_top_p.py               ← nucleus sampling
   06_stop_sequences.py      ← halting generation
   07_token_counting.py      ← tokens & cost, fully offline
+  08_streaming.py           ← stream the answer as it's generated
+  09_structured_outputs.py  ← guaranteed JSON / schema-conformant output
+  10_function_calling.py    ← let the model call your functions
+  11_embeddings.py          ← vectors & semantic similarity
 ```
