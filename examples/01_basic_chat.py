@@ -19,11 +19,7 @@ What to notice:
 import os
 import sys
 
-try:
-    from dotenv import load_dotenv
-except ImportError:
-    load_dotenv = lambda *args, **kwargs: None
-
+from dotenv import load_dotenv
 from openai import OpenAI
 
 load_dotenv()
