@@ -288,10 +288,10 @@ examples/
 
 ---
 
-<sub>
+### Footnote — quieting Pylance/type-checker noise
 
-**Footnote — quieting Pylance/type-checker noise.** Two patterns trip the type
-checker repeatedly with the OpenAI SDK. Pre-empt them and new files stay clean:
+Two patterns trip the type checker repeatedly with the OpenAI SDK. Pre-empt them
+and new files stay clean:
 
 1. **Assigning `messages` / `tools` to a variable** (rather than passing the
    literal straight into `create()`) makes Pylance infer a too-narrow type like
@@ -310,5 +310,3 @@ The repo's [.vscode/settings.json](.vscode/settings.json) also sets
 `python.analysis.typeCheckingMode` to `basic`, which keeps the useful checks
 (undefined names, bad attrs/args) while dropping the strict dict-vs-TypedDict
 complaints.
-
-</sub>
