@@ -28,8 +28,13 @@ import math
 import os
 import sys
 
+# Make the repo-root modules (pricing.py) importable no matter where you run from.
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 from dotenv import load_dotenv
 from openai import OpenAI
+
+from pricing import estimate_embedding_cost, format_cost
 
 load_dotenv()
 if not os.getenv("OPENAI_API_KEY"):
@@ -54,8 +59,9 @@ candidates = [
 
 # You can embed many texts in one call — pass a list. We embed the query and all
 # candidates together.
+model = "text-embedding-3-small"
 response = client.embeddings.create(
-    model="text-embedding-3-small",
+    model=model,
     input=[query] + candidates,
 )
 vectors = [item.embedding for item in response.data]
@@ -72,3 +78,8 @@ for text, vec in scored:
     print(f"  {cosine_similarity(query_vec, vec):.3f}  {text}")
 
 print(f"\n(Each vector has {len(query_vec)} dimensions.)")
+
+# Embeddings are cheap, but not free. The response reports the tokens billed.
+tokens = response.usage.prompt_tokens
+print(f"Billed {tokens} input tokens -> "
+      f"{format_cost(estimate_embedding_cost(model, tokens))}")
