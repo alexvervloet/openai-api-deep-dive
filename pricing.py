@@ -35,6 +35,15 @@ PRICING: dict[str, ModelPrice] = {
     "gpt-3.5-turbo":   ModelPrice(input_per_1m=0.50, output_per_1m=1.50),
 }
 
+# Embedding models (see examples/11_embeddings.py) are billed differently: there
+# is no "output" to generate, so you only pay for the tokens you send in. We keep
+# them in their own table with a single price per 1M tokens.
+EMBEDDING_PRICING: dict[str, float] = {
+    "text-embedding-3-small": 0.02,
+    "text-embedding-3-large": 0.13,
+    "text-embedding-ada-002": 0.10,
+}
+
 
 def estimate_cost(model: str, input_tokens: int, output_tokens: int) -> float:
     """Return the estimated cost in USD for a request/response.
@@ -54,6 +63,21 @@ def estimate_cost(model: str, input_tokens: int, output_tokens: int) -> float:
     return input_cost + output_cost
 
 
+def estimate_embedding_cost(model: str, input_tokens: int) -> float:
+    """Return the estimated cost in USD for embedding `input_tokens` tokens.
+
+    Embeddings have no output tokens, so cost depends only on the input.
+    """
+    if model not in EMBEDDING_PRICING:
+        known = ", ".join(sorted(EMBEDDING_PRICING))
+        raise KeyError(
+            f"No embedding pricing on file for {model!r}. "
+            f"Known models: {known}. "
+            f"Add it to EMBEDDING_PRICING in pricing.py (check the pricing page first)."
+        )
+    return input_tokens / 1_000_000 * EMBEDDING_PRICING[model]
+
+
 def format_cost(usd: float) -> str:
     """Pretty-print a cost. Tiny amounts get more decimal places so they don't
     just show up as ``$0.00`` and look free (they aren't!)."""
@@ -67,3 +91,7 @@ if __name__ == "__main__":
     demo_model = "gpt-4o-mini"
     cost = estimate_cost(demo_model, input_tokens=1_000, output_tokens=500)
     print(f"{demo_model}: 1,000 in + 500 out  ->  {format_cost(cost)}")
+
+    embed_model = "text-embedding-3-small"
+    embed_cost = estimate_embedding_cost(embed_model, input_tokens=1_000)
+    print(f"{embed_model}: 1,000 in  ->  {format_cost(embed_cost)}")
