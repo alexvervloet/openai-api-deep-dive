@@ -36,7 +36,14 @@ pip install -r requirements.txt
 cp .env.example .env
 #    ...then open .env and paste your key from
 #    https://platform.openai.com/api-keys
+
+# 4. Confirm everything is wired up correctly (makes no API call, costs nothing)
+python check_setup.py
 ```
+
+`check_setup.py` is your first stop if anything goes wrong: it checks your Python
+version, your installed packages, and your key, and tells you exactly what to fix.
+Green across the board means you're ready for Section 2.
 
 > 💡 **You can learn a lot before spending a cent.** The token-counting and
 > cost-estimation parts (Sections 5 & 6) run entirely offline. Skip ahead to
@@ -365,9 +372,31 @@ started with.
 
 ---
 
+## Troubleshooting
+
+Hit a snag? Run `python check_setup.py` first — it catches most problems. The
+rest, by the error you see:
+
+| What you see | What it means / the fix |
+|--------------|-------------------------|
+| `ModuleNotFoundError: No module named 'openai'` | Dependencies aren't installed (or your venv isn't active). Run `source .venv/bin/activate` then `pip install -r requirements.txt`. |
+| `Set OPENAI_API_KEY ...` on every script | No key found. `cp .env.example .env`, paste your real key, save. (The offline token/cost parts in Sections 5–6 still run without a key.) |
+| `AuthenticationError` / 401 | The key is present but wrong — expired, revoked, or a typo. Make a fresh one at the [API keys page](https://platform.openai.com/api-keys). |
+| `RateLimitError` / 429 | Too many requests, or you're out of credit. Wait a moment, or check your billing/usage in the dashboard. |
+| `NotFoundError` / 404 about the model | A model name was mistyped or your account can't access it. The examples use widely-available IDs; if you changed one, check it against the [models list](https://platform.openai.com/docs/models). |
+| `SyntaxError` or odd type errors on startup | You're likely on Python 3.9 or older. This repo needs 3.10+ — `check_setup.py` will confirm your version. |
+| It "hangs" with no output | Some examples stream, others wait for the full reply before printing. Give it a few seconds; for streaming examples you'll see text appear word by word. |
+
+Still stuck? Every example is small and self-contained — open the file, read the
+docstring at the top, and run it directly. The error message almost always points
+at the line.
+
+---
+
 ## File map
 
 ```
+check_setup.py              ← run first: verifies Python, packages, and your key
 hands_on/
   ask.py                    ← capstone CLI: ask a question about a code file
   extract.py                ← capstone CLI: extract validated data from free text
