@@ -55,7 +55,7 @@ def estimate_cost(model: str, input_tokens: int, output_tokens: int) -> float:
         raise KeyError(
             f"No pricing on file for {model!r}. "
             f"Known models: {known}. "
-            f"Add it to PRICING in pricing.py (check the pricing page first)."
+            f"Add it to PRICING in utils/pricing.py (check the pricing page first)."
         )
     price = PRICING[model]
     input_cost = input_tokens / 1_000_000 * price.input_per_1m
@@ -73,7 +73,7 @@ def estimate_embedding_cost(model: str, input_tokens: int) -> float:
         raise KeyError(
             f"No embedding pricing on file for {model!r}. "
             f"Known models: {known}. "
-            f"Add it to EMBEDDING_PRICING in pricing.py (check the pricing page first)."
+            f"Add it to EMBEDDING_PRICING in utils/pricing.py (check the pricing page first)."
         )
     return input_tokens / 1_000_000 * EMBEDDING_PRICING[model]
 
@@ -87,7 +87,7 @@ def format_cost(usd: float) -> str:
 
 
 if __name__ == "__main__":
-    # Run `python pricing.py` for a quick demo / sanity check.
+    # Run `python utils/pricing.py` for a quick demo / sanity check.
     demo_model = "gpt-4o-mini"
     cost = estimate_cost(demo_model, input_tokens=1_000, output_tokens=500)
     print(f"{demo_model}: 1,000 in + 500 out  ->  {format_cost(cost)}")

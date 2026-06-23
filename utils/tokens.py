@@ -74,7 +74,7 @@ def count_message_tokens(messages: list[dict], model: str = "gpt-4o-mini") -> in
 
 
 if __name__ == "__main__":
-    # Run `python tokens.py` to see tokenization in action.
+    # Run `python utils/tokens.py` to see tokenization in action.
     sample = "The quick brown fox jumps over the lazy dog."
     enc = _encoding_for("gpt-4o-mini")
     ids = enc.encode(sample)
