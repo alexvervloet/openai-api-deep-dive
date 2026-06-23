@@ -146,7 +146,7 @@ But "rough" isn't good enough for budgeting, so we count exactly with
 **tiktoken**, locally, with no API call.
 
 ```bash
-python tokens.py          # see a sentence broken into tokens
+python utils/tokens.py          # see a sentence broken into tokens
 ```
 
 Why counting matters:
@@ -156,7 +156,7 @@ Why counting matters:
 3. **Intuition** — watching the count change as you edit a prompt teaches you
    how the model "sees" your text.
 
-See [tokens.py](tokens.py) for `count_tokens()` (a raw string) and
+See [utils/tokens.py](utils/tokens.py) for `count_tokens()` (a raw string) and
 `count_message_tokens()` (a full chat list, including the small per-message
 overhead the API adds).
 
@@ -165,7 +165,7 @@ overhead the API adds).
 ## 6. Cost estimation
 
 OpenAI charges **separately for input and output tokens**, and output is
-typically several times more expensive. [pricing.py](pricing.py) holds a small
+typically several times more expensive. [utils/pricing.py](utils/pricing.py) holds a small
 price table and an `estimate_cost()` helper.
 
 ```bash
@@ -175,7 +175,7 @@ python examples/07_token_counting.py   # tokens -> dollars, across models, offli
 Sample output shows the same request costing wildly different amounts per model
 — which is why **choosing the right model is part of prompt engineering.**
 
-> ⚠️ Prices change. The table in `pricing.py` is a snapshot — always confirm at
+> ⚠️ Prices change. The table in `utils/pricing.py` is a snapshot — always confirm at
 > <https://platform.openai.com/docs/pricing>.
 
 ---
@@ -188,22 +188,22 @@ see the *actual* usage and cost after.
 
 ```bash
 # See the cost first — no API call, no key needed:
-python ask.py snippets/buggy.py "Is there a bug here?" --dry-run
+python hands_on/ask.py snippets/buggy.py "Is there a bug here?" --dry-run
 
 # For real (needs your key in .env):
-python ask.py snippets/buggy.py "Is there a bug here?"
+python hands_on/ask.py snippets/buggy.py "Is there a bug here?"
 
 # Now turn the knobs you just learned:
-python ask.py snippets/buggy.py "Rewrite this cleanly" --temperature 0
-python ask.py snippets/buggy.py "List the issues" --max-tokens 200 --stop "4."
-python ask.py snippets/buggy.py "Explain this" --model gpt-4o
+python hands_on/ask.py snippets/buggy.py "Rewrite this cleanly" --temperature 0
+python hands_on/ask.py snippets/buggy.py "List the issues" --max-tokens 200 --stop "4."
+python hands_on/ask.py snippets/buggy.py "Explain this" --model gpt-4o
 ```
 
-Run `python ask.py --help` to see every knob explained inline. Read the source
-in [ask.py](ask.py) — it's commented as a tutorial, especially `build_messages()`
+Run `python hands_on/ask.py --help` to see every knob explained inline. Read the source
+in [hands_on/ask.py](hands_on/ask.py) — it's commented as a tutorial, especially `build_messages()`
 (how the request is assembled) and the usage/cost reporting at the end.
 
-**Suggested exercise:** point `ask.py` at your *own* code, try the same question
+**Suggested exercise:** point `hands_on/ask.py` at your *own* code, try the same question
 at `--temperature 0` vs `--temperature 1.2`, and watch both the answers and the
 cost change.
 
@@ -310,16 +310,16 @@ shows it as a Markdown summary and a real table. It's where examples 14
 
 ```bash
 # See tokens + cost first — no API call:
-python extract.py snippets/meeting_notes.txt --dry-run
+python hands_on/extract.py snippets/meeting_notes.txt --dry-run
 
 # Extract action items (owner, due date, inferred priority) into a table:
-python extract.py snippets/meeting_notes.txt
+python hands_on/extract.py snippets/meeting_notes.txt
 
 # Want the raw validated JSON instead? (e.g. to pipe into another tool)
-python extract.py snippets/meeting_notes.txt --json
+python hands_on/extract.py snippets/meeting_notes.txt --json
 ```
 
-Read the source in [extract.py](extract.py): the `Extraction` / `ActionItem`
+Read the source in [hands_on/extract.py](hands_on/extract.py): the `Extraction` / `ActionItem`
 Pydantic models *are* the schema the model must follow, and `render()` is the
 rich table. **Suggested exercise:** point it at your own meeting notes or an
 email, or change the models to extract something else entirely (contacts,
@@ -330,10 +330,12 @@ invoice line items) — the prompt barely changes.
 ## File map
 
 ```
-ask.py                      ← capstone CLI: ask a question about a code file
-extract.py                  ← capstone CLI: extract validated data from free text
-tokens.py                   ← tiktoken-based token counting
-pricing.py                  ← price table + cost estimation
+hands_on/
+  ask.py                    ← capstone CLI: ask a question about a code file
+  extract.py                ← capstone CLI: extract validated data from free text
+utils/
+  tokens.py                 ← tiktoken-based token counting
+  pricing.py                ← price table + cost estimation
 snippets/buggy.py           ← a sample file to ask questions about
 snippets/meeting_notes.txt  ← sample free-form text for extract.py
 examples/
