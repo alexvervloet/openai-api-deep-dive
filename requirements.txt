@@ -16,3 +16,8 @@ pydantic>=2.0.0
 # rich renders Markdown, syntax-highlighted code, and tables in the terminal —
 # used by example 15 and extract.py to format model output nicely.
 rich>=13.0.0
+
+# FastAPI + uvicorn power the streaming_server.py capstone. FastAPI handles
+# the HTTP layer; uvicorn is the ASGI server that runs it.
+fastapi>=0.100.0
+uvicorn[standard]>=0.20.0
