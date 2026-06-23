@@ -282,6 +282,16 @@ you squint at.
 python examples/15_rich_output.py
 ```
 
+### Server-Sent Events (SSE) — the protocol under streaming
+Every streaming AI response travels over SSE: a plain HTTP response that stays
+open and drips `data: <json>` lines until the server is done. The SDK hides the
+parsing, but understanding the wire format is essential when you build a backend
+that forwards tokens to a browser. This example shows raw events, per-token
+timing, and partial response accumulation.
+```bash
+python examples/16_sse.py
+```
+
 ---
 
 ## Where to go next
@@ -298,6 +308,33 @@ You've now covered the essentials and the most common extensions. Further on:
 
 Each of these slots neatly on top of the "send messages, get a message" idea you
 started with.
+
+---
+
+## 10. Capstone: `streaming_server.py`
+
+Where `ask.py` and `extract.py` are CLI tools, `streaming_server.py` is a web
+service. It's a FastAPI backend that streams AI responses to a browser over SSE,
+showing three production concerns: token-by-token forwarding, client disconnect
+detection, and error recovery with retries.
+
+```bash
+# Start the server (auto-reloads on file saves):
+uvicorn hands_on.streaming_server:app --reload
+
+# Then open: http://localhost:8000
+```
+
+Open the browser's **Network tab** and click the `/stream` request to see the raw
+`text/event-stream` response. Close the tab mid-stream to watch the server log
+"client disconnected" and stop the AI call. Read the source in
+[hands_on/streaming_server.py](hands_on/streaming_server.py) — the three-phase
+generator (`_stream_tokens`) is the core pattern every production streaming
+endpoint follows.
+
+**Suggested exercise:** point the server at `gpt-4o` and ask it something long,
+then close the browser tab mid-response. Notice in the server logs that generation
+stops immediately — no wasted tokens.
 
 ---
 
@@ -333,6 +370,8 @@ invoice line items) — the prompt barely changes.
 hands_on/
   ask.py                    ← capstone CLI: ask a question about a code file
   extract.py                ← capstone CLI: extract validated data from free text
+  streaming_server.py       ← capstone server: stream AI responses over SSE
+  static/index.html         ← browser UI for the streaming server
 utils/
   tokens.py                 ← tiktoken-based token counting
   pricing.py                ← price table + cost estimation
@@ -354,6 +393,7 @@ examples/
   13_error_handling.py      ← timeouts, retries & typed exceptions
   14_pydantic_validation.py ← typed, validated responses via Pydantic
   15_rich_output.py         ← Markdown, tables & code blocks in the terminal
+  16_sse.py                 ← SSE protocol: raw events, timing, partial accumulation
 ```
 
 ---
