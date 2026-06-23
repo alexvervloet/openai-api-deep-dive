@@ -1,0 +1,18 @@
+Project Phoenix — weekly sync, Tuesday
+
+Good turnout today. Maria walked us through the new onboarding flow; overall the
+team is happy with it but the empty-state screens still feel unfinished. Maria
+said she'll polish those before the design review on Friday.
+
+We're still blocked on the analytics migration. Devon is going to chase the data
+team this week — he thinks it's pretty urgent because the launch depends on it.
+If we don't have the new pipeline by end of month we'll have to slip the date.
+
+Priya raised that nobody has written the release notes yet. She volunteered to
+draft a first version, no particular rush, sometime before launch is fine.
+
+Oh, and we agreed someone needs to set up the on-call rotation. Tom said he'd
+take care of it but didn't commit to a date. Let's call it sometime next sprint.
+
+Quick reminder from me (Alex): please all update your tickets before standup
+tomorrow so the board reflects reality.
