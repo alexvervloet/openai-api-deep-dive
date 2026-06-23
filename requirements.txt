@@ -7,3 +7,12 @@ tiktoken>=0.7.0
 
 # Loads variables from a .env file (like OPENAI_API_KEY) into the environment.
 python-dotenv>=1.0.0
+
+# Pydantic models define + validate the structured outputs in examples 14 and
+# extract.py. The OpenAI SDK turns a model into a strict schema and returns a
+# validated instance. (Pydantic v2.)
+pydantic>=2.0.0
+
+# rich renders Markdown, syntax-highlighted code, and tables in the terminal —
+# used by example 15 and extract.py to format model output nicely.
+rich>=13.0.0
