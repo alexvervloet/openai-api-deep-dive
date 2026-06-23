@@ -184,7 +184,7 @@ perceived responsiveness — which is why chat UIs stream.
 
 ---
 
-## Capstones 9 & 10
+## Capstones 9, 10 & 11
 
 **Do (`extract.py`).** Run it on `snippets/meeting_notes.txt`, then open the file
 and add a line like `"Nobody owns the budget review."` Rerun. How did the model
@@ -201,6 +201,23 @@ It detected the client disconnect and stopped the model call immediately — no
 further tokens generated, nothing billed for output you'd never see. Detecting
 disconnects is a real production cost lever, not just tidiness.
 </details>
+
+**Predict, then run (`rag.py`).** Run `python hands_on/rag.py`, then run it again
+with `--no-rag`. Will the answer change? Which one can you trust, and why?
+
+<details><summary>▸ Answer</summary>
+
+With retrieval, the model answers from the fact pasted into the prompt ("30
+days"). With `--no-rag` there's no source — "Nimbus Notes" is made up — so it
+guesses or admits it doesn't know. That's the whole idea: a model can only answer
+from what's in its context window, and RAG decides what to put there.
+</details>
+
+**Do (`rag.py`).** Add a new fact to `KNOWLEDGE_BASE` (say,
+`"Nimbus Notes can import notebooks from Evernote and Notion."`) and ask a
+question only that fact can answer. Use `--show-prompt` to confirm it actually got
+retrieved into the context. If it didn't, what would you try — reword the
+question, or raise `-k`?
 
 ---
 
