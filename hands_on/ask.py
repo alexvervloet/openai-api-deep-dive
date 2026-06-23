@@ -14,29 +14,33 @@ is exposed as a command-line flag with a short explanation in --help.
 Examples
 --------
   # Simplest form: explain a file
-  python ask.py snippets/buggy.py "What does this code do?"
+  python hands_on/ask.py snippets/buggy.py "What does this code do?"
 
   # Find a bug, with a more capable model
-  python ask.py snippets/buggy.py "Is there a bug here?" --model gpt-4o
+  python hands_on/ask.py snippets/buggy.py "Is there a bug here?" --model gpt-4o
 
   # See the cost *before* spending anything (no API call is made)
-  python ask.py snippets/buggy.py "Explain this" --dry-run
+  python hands_on/ask.py snippets/buggy.py "Explain this" --dry-run
 
   # Turn creativity down to 0 for deterministic, focused answers
-  python ask.py snippets/buggy.py "Rewrite this cleanly" --temperature 0
+  python hands_on/ask.py snippets/buggy.py "Rewrite this cleanly" --temperature 0
 
   # Cap the answer length and stop at a marker
-  python ask.py snippets/buggy.py "List 3 issues" --max-tokens 200 --stop "4."
+  python hands_on/ask.py snippets/buggy.py "List 3 issues" --max-tokens 200 --stop "4."
 """
 
 import argparse
 import os
 import sys
 
+# Make the repo root importable so `utils.*` is resolvable when running from
+# any directory.
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 from dotenv import load_dotenv
 
-from pricing import estimate_cost, format_cost
-from tokens import count_message_tokens, count_tokens
+from utils.pricing import estimate_cost, format_cost
+from utils.tokens import count_message_tokens, count_tokens
 
 
 # A default "system" message. The system role sets the assistant's behavior and
