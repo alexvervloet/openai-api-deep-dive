@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Streaming AI — SSE demo</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: ui-monospace, "Cascadia Code", "Fira Code", monospace;
+      background: #111;
+      color: #e0e0e0;
+      min-height: 100vh;
+      padding: 2rem;
+    }
+
+    .container { max-width: 760px; margin: 0 auto; }
+
+    h1 { font-size: 1.2rem; color: #fff; margin-bottom: 0.25rem; }
+    .subtitle { font-size: 0.8rem; color: #666; margin-bottom: 1.5rem; }
+    .hint { font-size: 0.75rem; color: #555; margin-bottom: 1.5rem; }
+
+    textarea {
+      width: 100%;
+      height: 80px;
+      background: #1e1e1e;
+      color: #e0e0e0;
+      border: 1px solid #333;
+      border-radius: 4px;
+      padding: 10px 12px;
+      font: inherit;
+      font-size: 0.9rem;
+      resize: vertical;
+      outline: none;
+    }
+    textarea:focus { border-color: #4a9eff; }
+
+    .controls {
+      display: flex;
+      gap: 0.75rem;
+      align-items: center;
+      margin-top: 0.75rem;
+    }
+
+    button {
+      background: #4a9eff;
+      color: #000;
+      border: none;
+      border-radius: 4px;
+      padding: 8px 18px;
+      font: inherit;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    button:hover:not(:disabled) { background: #6ab4ff; }
+    button:disabled { background: #2a2a2a; color: #555; cursor: not-allowed; }
+
+    #status {
+      font-size: 0.75rem;
+      color: #888;
+    }
+    #status.error { color: #ff6b6b; }
+    #status.done  { color: #6bffb8; }
+
+    #output {
+      margin-top: 1.25rem;
+      padding: 1rem 1.25rem;
+      background: #1e1e1e;
+      border-left: 3px solid #4a9eff;
+      border-radius: 0 4px 4px 0;
+      min-height: 120px;
+      white-space: pre-wrap;
+      word-break: break-word;
+      font-size: 0.9rem;
+      line-height: 1.65;
+      color: #d0d0d0;
+    }
+    #output.error { border-left-color: #ff6b6b; color: #ff9999; }
+
+    #cursor {
+      display: inline-block;
+      width: 2px;
+      height: 1em;
+      background: #4a9eff;
+      margin-left: 1px;
+      vertical-align: text-bottom;
+      animation: blink 1s step-end infinite;
+    }
+    @keyframes blink { 50% { opacity: 0; } }
+
+    .tip {
+      margin-top: 1.5rem;
+      font-size: 0.72rem;
+      color: #444;
+      border-top: 1px solid #222;
+      padding-top: 1rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Streaming AI — SSE demo</h1>
+    <p class="subtitle">OpenAI · gpt-4o-mini · hands_on/streaming_server.py</p>
+    <p class="hint">
+      Open the browser's <strong>Network tab</strong>, click the /stream request,
+      and watch the raw <code>text/event-stream</code> response arrive token by token.
+    </p>
+
+    <textarea id="prompt" placeholder="Enter your prompt here…">Write a haiku about streaming data.</textarea>
+
+    <div class="controls">
+      <button id="btn" onclick="startStream()">Stream it</button>
+      <span id="status">ready</span>
+    </div>
+
+    <div id="output"><span id="cursor"></span></div>
+
+    <p class="tip">
+      Each token arrives as <code>data: {"type":"token","text":"..."}</code> ·
+      stream ends with <code>data: {"type":"done",...}</code> ·
+      close tab mid-stream to trigger disconnect detection
+    </p>
+  </div>
+
+  <script>
+    let activeReader = null;
+
+    async function startStream() {
+      const prompt = document.getElementById('prompt').value.trim();
+      if (!prompt) return;
+
+      // Abort any in-progress stream.
+      if (activeReader) {
+        try { await activeReader.cancel(); } catch (_) {}
+        activeReader = null;
+      }
+
+      const output  = document.getElementById('output');
+      const status  = document.getElementById('status');
+      const btn     = document.getElementById('btn');
+      const cursor  = document.getElementById('cursor');
+
+      output.textContent = '';
+      output.className   = '';
+      output.appendChild(cursor);
+      status.textContent = 'connecting…';
+      status.className   = '';
+      btn.disabled       = true;
+
+      let tokenCount   = 0;
+      const startTime  = Date.now();
+
+      try {
+        const response = await fetch('/stream', {
+          method:  'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body:    JSON.stringify({ prompt }),
+        });
+
+        if (!response.ok) {
+          setError(output, status, `HTTP ${response.status}: ${response.statusText}`);
+          return;
+        }
+
+        const reader  = response.body.getReader();
+        activeReader  = reader;
+        const decoder = new TextDecoder();
+        let buffer    = '';
+
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+
+          buffer += decoder.decode(value, { stream: true });
+
+          // SSE events are separated by double newlines.
+          const events = buffer.split('\n\n');
+          buffer = events.pop();   // keep the incomplete trailing chunk
+
+          for (const rawEvent of events) {
+            for (const line of rawEvent.split('\n')) {
+              if (!line.startsWith('data: ')) continue;
+
+              let data;
+              try { data = JSON.parse(line.slice(6)); }
+              catch (_) { continue; }
+
+              if (data.type === 'token') {
+                // Insert text just before the cursor.
+                cursor.insertAdjacentText('beforebegin', data.text);
+                tokenCount++;
+                const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
+                status.textContent = `${tokenCount} tokens · ${elapsed}s`;
+
+              } else if (data.type === 'done') {
+                cursor.remove();
+                const elapsed = ((Date.now() - startTime) / 1000).toFixed(2);
+                status.textContent =
+                  `done · ${data.tokens} tokens · ${elapsed}s · ${data.elapsed}s server-side`;
+                status.className = 'done';
+
+              } else if (data.type === 'error') {
+                cursor.remove();
+                let msg = `Error: ${data.message}`;
+                if (data.partial) msg += `\n\n[Partial response before error]\n${data.partial}`;
+                setError(output, status, msg);
+              }
+            }
+          }
+        }
+
+      } catch (err) {
+        if (err.name !== 'AbortError') {
+          cursor.remove();
+          setError(output, status, `Network error: ${err.message}`);
+        }
+      } finally {
+        activeReader = null;
+        btn.disabled = false;
+        // If we ended without a done/error event, just tidy up.
+        if (status.className === '') {
+          status.textContent = status.textContent || 'disconnected';
+        }
+      }
+    }
+
+    function setError(output, status, message) {
+      output.textContent  = message;
+      output.className    = 'error';
+      status.textContent  = 'error';
+      status.className    = 'error';
+    }
+
+    // Allow Ctrl+Enter to submit.
+    document.getElementById('prompt').addEventListener('keydown', e => {
+      if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) startStream();
+    });
+  </script>
+</body>
+</html>
