@@ -180,7 +180,7 @@ Sample output shows the same request costing wildly different amounts per model
 
 ---
 
-## 7. The capstone: `ask.py`
+## 7. The first capstone: `ask.py`
 
 Everything above comes together in one tool: ask a question about a code file,
 see the token count and estimated cost *before* you spend, get the answer, and
@@ -294,24 +294,33 @@ python examples/16_sse.py
 
 ---
 
-## Where to go next
+## 9. The second capstone: `extract.py`
 
-You've now covered the essentials and the most common extensions. Further on:
+Where `ask.py` returns *prose*, `extract.py` returns *data*. Point it at messy
+free-form text and it pulls out a clean, typed, **validated** structure — then
+shows it as a Markdown summary and a real table. It's where examples 14
+(Pydantic) and 15 (rich) earn their keep on a realistic task.
 
-- **Retrieval-augmented generation (RAG)** — combine embeddings (Section 8) with
-  chat to answer questions over your own documents.
-- **The context window** — what happens as conversations get long, and smarter
-  ways to manage history than the simple trim in example 12 (summarizing old
-  turns, sliding windows).
-- **Vision & audio** — passing images to multimodal models, speech-to-text.
-- **Streaming + tools together** — the pattern most production assistants use.
+```bash
+# See tokens + cost first — no API call:
+python hands_on/extract.py snippets/meeting_notes.txt --dry-run
 
-Each of these slots neatly on top of the "send messages, get a message" idea you
-started with.
+# Extract action items (owner, due date, inferred priority) into a table:
+python hands_on/extract.py snippets/meeting_notes.txt
+
+# Want the raw validated JSON instead? (e.g. to pipe into another tool)
+python hands_on/extract.py snippets/meeting_notes.txt --json
+```
+
+Read the source in [hands_on/extract.py](hands_on/extract.py): the `Extraction` / `ActionItem`
+Pydantic models *are* the schema the model must follow, and `render()` is the
+rich table. **Suggested exercise:** point it at your own meeting notes or an
+email, or change the models to extract something else entirely (contacts,
+invoice line items) — the prompt barely changes.
 
 ---
 
-## 10. Capstone: `streaming_server.py`
+## 10. The third capstone: `streaming_server.py`
 
 Where `ask.py` and `extract.py` are CLI tools, `streaming_server.py` is a web
 service. It's a FastAPI backend that streams AI responses to a browser over SSE,
@@ -338,29 +347,21 @@ stops immediately — no wasted tokens.
 
 ---
 
-## 9. A second mini-project: `extract.py`
+## Where to go next
 
-Where `ask.py` returns *prose*, `extract.py` returns *data*. Point it at messy
-free-form text and it pulls out a clean, typed, **validated** structure — then
-shows it as a Markdown summary and a real table. It's where examples 14
-(Pydantic) and 15 (rich) earn their keep on a realistic task.
+You've now covered the essentials, the common extensions, and three capstone
+projects. Further on:
 
-```bash
-# See tokens + cost first — no API call:
-python hands_on/extract.py snippets/meeting_notes.txt --dry-run
+- **Retrieval-augmented generation (RAG)** — combine embeddings (Section 8) with
+  chat to answer questions over your own documents.
+- **The context window** — what happens as conversations get long, and smarter
+  ways to manage history than the simple trim in example 12 (summarizing old
+  turns, sliding windows).
+- **Vision & audio** — passing images to multimodal models, speech-to-text.
+- **Streaming + tools together** — the pattern most production assistants use.
 
-# Extract action items (owner, due date, inferred priority) into a table:
-python hands_on/extract.py snippets/meeting_notes.txt
-
-# Want the raw validated JSON instead? (e.g. to pipe into another tool)
-python hands_on/extract.py snippets/meeting_notes.txt --json
-```
-
-Read the source in [hands_on/extract.py](hands_on/extract.py): the `Extraction` / `ActionItem`
-Pydantic models *are* the schema the model must follow, and `render()` is the
-rich table. **Suggested exercise:** point it at your own meeting notes or an
-email, or change the models to extract something else entirely (contacts,
-invoice line items) — the prompt barely changes.
+Each of these slots neatly on top of the "send messages, get a message" idea you
+started with.
 
 ---
 
