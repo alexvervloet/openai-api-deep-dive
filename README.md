@@ -6,7 +6,9 @@ understand every moving part: chat completions, roles, the sampling knobs
 (temperature, top_p, max_tokens, stop), token counting, and cost.
 
 This repo is meant to be *walked through*, not just read. Each section ends with
-something to run. Do the running — that's where the learning is.
+something to run. Do the running — that's where the learning is. And once a
+section clicks, [EXERCISES.md](EXERCISES.md) has a quick predict-then-run prompt
+for it: committing to an answer *before* you run is what makes it stick.
 
 ---
 
@@ -397,6 +399,7 @@ at the line.
 
 ```
 check_setup.py              ← run first: verifies Python, packages, and your key
+EXERCISES.md                ← active-recall prompts, one per README section
 hands_on/
   ask.py                    ← capstone CLI: ask a question about a code file
   extract.py                ← capstone CLI: extract validated data from free text

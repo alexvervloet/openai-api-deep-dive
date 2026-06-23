@@ -1,0 +1,211 @@
+# Exercises — make the learning stick
+
+Reading code teaches you less than *predicting* what it will do and then checking.
+This file turns each section of the [README](README.md) into a few quick
+active-recall prompts: a thing to predict, a thing to change, and a question to
+answer from memory. None take more than a couple of minutes.
+
+How to use it: work the section in the README first, then come back here. For each
+exercise, **commit to an answer before you run or reveal** — the prediction is
+where the learning happens, even (especially) when you're wrong. Answers are
+hidden behind ▸ toggles.
+
+> Most of these cost a fraction of a cent. The ones marked **(offline)** make no
+> API call at all.
+
+---
+
+## Section 2 — Your first request
+
+**Predict.** Before running `examples/01_basic_chat.py`, what *type* is
+`response.choices` — a string, a dict, or a list? Why does the code say
+`choices[0]`?
+
+<details><summary>▸ Answer</summary>
+
+A **list**. A single request can return several alternative completions (via the
+`n` parameter), so the replies live in a list and `[0]` takes the first. With the
+default `n=1` there's exactly one.
+</details>
+
+**Do.** Change the question in the script to something with a clearly long answer
+("Explain how TCP works"). Run it and look at `response.usage`. Which is larger,
+`prompt_tokens` or `completion_tokens`? Did that match your guess?
+
+---
+
+## Section 3 — Roles
+
+**Do.** Open `examples/02_roles.py` and set the system message to
+`"You answer only in haiku."` Rerun. Then move that same instruction into the
+*user* message instead of the system message. Does it still obey? Which placement
+felt more reliable?
+
+**Recall.** The API is *stateless*. If that's true, how does a chatbot "remember"
+your name from three messages ago?
+
+<details><summary>▸ Answer</summary>
+
+It doesn't — *you* do. Every turn you resend the entire `messages` list,
+including the earlier user and assistant turns. The "memory" is just that growing
+list being sent each time. (You'll build exactly this in `examples/12_conversation.py`.)
+</details>
+
+---
+
+## Section 4 — The knobs
+
+**Predict, then run.** You run `examples/03_temperature.py` twice at
+`temperature=0`. How similar will the two answers be? Now twice at
+`temperature=1.5`?
+
+<details><summary>▸ Answer</summary>
+
+At `0` they'll be nearly identical every time (focused, near-deterministic — though
+never a 100% guarantee). At `1.5` they'll diverge, sometimes wildly. This is the
+whole point of the knob: low for facts/code, high for variety.
+</details>
+
+**Do.** In `examples/04_max_tokens.py`, set `max_tokens` to something tiny like
+`10` and ask for a paragraph. Inspect `finish_reason`. What value do you get, and
+what does it tell you?
+
+<details><summary>▸ Answer</summary>
+
+`"length"` — the model was cut off by your cap, not because it was done. A natural
+finish shows `"stop"`. Watching `finish_reason` is how you detect truncated
+answers in real code.
+</details>
+
+**Recall.** Why does the README warn against tuning `temperature` *and* `top_p` at
+the same time?
+
+<details><summary>▸ Answer</summary>
+
+They both reshape the same probability distribution the model samples from, so
+their effects interact in ways that are hard to reason about. Pick one lever and
+leave the other at its default.
+</details>
+
+---
+
+## Section 5 — Tokens **(offline)**
+
+**Predict, then run.** Run `python utils/tokens.py`. Before you do: will
+`"unbelievable"` be 1 token or several? Will `"    "` (four spaces) cost anything?
+Edit the `sample` string to test both.
+
+<details><summary>▸ Answer</summary>
+
+`"unbelievable"` splits into multiple sub-word tokens; common short words are
+often one. Whitespace is *not* free — runs of spaces and newlines are tokens too.
+Seeing the `Pieces:` list is the fastest way to build intuition for how the model
+"sees" text.
+</details>
+
+**Do.** Take a chunk of your own code and a chunk of plain English of roughly the
+same character count. Count both with `count_tokens()`. Which is denser in tokens,
+and why might code cost more than prose?
+
+---
+
+## Section 6 — Cost **(offline)**
+
+**Predict.** A request is 2,000 input tokens and 500 output tokens. Using the
+prices in `utils/pricing.py`, will it cost more on `gpt-4o-mini` or `gpt-4o`?
+Roughly how many times more?
+
+<details><summary>▸ Answer</summary>
+
+Far more on `gpt-4o`. Do the arithmetic with `estimate_cost()` to see the exact
+multiple — then notice that **output** tokens dominate, since output is priced
+several times higher than input. Choosing the cheaper model for a task is real
+money saved.
+</details>
+
+**Do.** Add a fictional model `"gpt-4o-ultra"` at 4x the `gpt-4o` price to the
+`PRICING` table and rerun your estimate. (Then delete it.) You've just learned how
+to keep the table current when prices change.
+
+---
+
+## Section 7 — Capstone: `ask.py`
+
+**Do.** Run `ask.py` on `snippets/buggy.py` with `--dry-run`, note the estimated
+cost, then run it for real and compare the estimate to the *actual* cost printed
+at the end. Were they close? Where would they diverge most?
+
+<details><summary>▸ Answer</summary>
+
+The input estimate should be near-exact; the gap is on the output side, because
+the dry run can only *assume* an output length. The real answer might be shorter
+or longer than the assumed ~500 tokens, moving the actual cost accordingly.
+</details>
+
+**Stretch.** Point `ask.py` at one of your own files and ask the same question at
+`--temperature 0` and `--temperature 1.2`. Compare both the answers and the cost.
+
+---
+
+## Section 8 — Beyond the basics
+
+**Recall.** In function/tool calling (`examples/10_function_calling.py`), the
+model decides to call your function. Does the OpenAI API run your function for
+you?
+
+<details><summary>▸ Answer</summary>
+
+No. The model only emits the function *name and arguments*. **You** run the
+function and feed the result back in a follow-up message. The model never executes
+your code — it just asks for it to be run.
+</details>
+
+**Predict, then run.** In `examples/11_embeddings.py`, the demo ranks sentences by
+similarity to a query. Can a sentence that shares *no words* with the query still
+rank highly?
+
+<details><summary>▸ Answer</summary>
+
+Yes — that's the entire value of embeddings. They capture *meaning*, not word
+overlap, so "the feline napped" can rank near "a cat is sleeping." This is why
+embeddings power semantic search and RAG.
+</details>
+
+**Do.** Run `examples/08_streaming.py` and then `examples/01_basic_chat.py` back
+to back. The total time-to-finish is similar, so what did streaming actually buy
+you?
+
+<details><summary>▸ Answer</summary>
+
+Time-to-*first-token*. The user starts reading immediately instead of staring at a
+blank screen until the whole answer is ready. Same total time, far better
+perceived responsiveness — which is why chat UIs stream.
+</details>
+
+---
+
+## Capstones 9 & 10
+
+**Do (`extract.py`).** Run it on `snippets/meeting_notes.txt`, then open the file
+and add a line like `"Nobody owns the budget review."` Rerun. How did the model
+handle an action item with no clear owner?
+
+**Do (`streaming_server.py`).** Start the server, open the browser, and ask for a
+long answer. Open the Network tab, find the `/stream` request, and watch the
+`data:` lines arrive. Then close the tab mid-answer and check the server logs.
+What did the server do the instant you disconnected, and why does that save money?
+
+<details><summary>▸ Answer</summary>
+
+It detected the client disconnect and stopped the model call immediately — no
+further tokens generated, nothing billed for output you'd never see. Detecting
+disconnects is a real production cost lever, not just tidiness.
+</details>
+
+---
+
+### Where to take it next
+
+Invent your own. The best exercise is a question *you* genuinely don't know the
+answer to — change one thing, predict the effect, run it, and reconcile the
+difference. That loop is the whole skill.
