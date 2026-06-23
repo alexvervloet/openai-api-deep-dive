@@ -16,14 +16,14 @@ It shows three things:
   3. How that token count maps to dollars at different models' prices.
 """
 
-# Make the repo-root modules (pricing.py, tokens.py) importable no matter what
-# directory you run this from.
+# Make the repo-root modules (utils/pricing.py, utils/tokens.py) importable no
+# matter what directory you run this from.
 import os
 import sys
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from pricing import PRICING, estimate_cost, format_cost
-from tokens import count_message_tokens, count_tokens
+from utils.pricing import PRICING, estimate_cost, format_cost
+from utils.tokens import count_message_tokens, count_tokens
 
 # 1. Raw string tokenization.
 sentence = "Tokens are not the same as words!"
