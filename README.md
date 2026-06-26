@@ -301,6 +301,17 @@ timing, and partial response accumulation.
 python examples/16_sse.py
 ```
 
+### Local models — the same client, a different `base_url`
+Nothing here is tied to OpenAI's servers. Local runtimes (**Ollama**,
+**llama.cpp**) expose an *OpenAI-compatible* endpoint, so the same `openai` SDK
+talks to a model on your own machine — you change `base_url` and pass any
+non-empty `api_key`, and everything else (roles, knobs, streaming, usage) works
+unchanged. Privacy, no per-token bill, and offline use, in exchange for running
+the server yourself. The example degrades gracefully if no local server is up.
+```bash
+python examples/17_local_serving.py    # needs a local runtime; prints how to start one
+```
+
 ---
 
 ## 9. The second capstone: `extract.py`
@@ -436,6 +447,29 @@ at the line.
 
 ---
 
+## From teaching code to production
+
+Every example here takes shortcuts that are perfect for learning and wrong for a
+real deployment. Here's the map from each shortcut to what production uses:
+
+| This repo's teaching shortcut | In production |
+|-------------------------------|---------------|
+| The answer goes to `print()` | One **structured trace** per request — id, timing, tokens — you can search after the fact |
+| `estimate_cost()` just prints a number | An enforced **budget** that refuses the call before it overspends |
+| A bare `client.chat.completions.create(...)` | The call wrapped in **retries + backoff** and a **circuit breaker** for 429s/503s/timeouts |
+| Every call hits the API | A **response cache** so repeat questions cost nothing |
+| Model id and system prompt are string literals in the script | **Versioned prompts/models** behind config, promoted only past an **eval gate** |
+| You trust whatever the model returns | **Input/output guardrails** on the request path |
+
+These shortcuts are right for learning and wrong for production. All seven
+concerns — observability, cost, reliability, caching, guardrails, prompt
+versioning, and eval gates — are built from scratch and wired into one running
+app in **[Production](https://github.com/Ailuue/ai-in-production-deep-dive)** (#8 in the
+series). It runs **offline on a mock provider**, so you can see the whole ops
+machinery with no key and no cost.
+
+---
+
 ## File map
 
 ```
@@ -469,6 +503,7 @@ examples/
   14_pydantic_validation.py ← typed, validated responses via Pydantic
   15_rich_output.py         ← Markdown, tables & code blocks in the terminal
   16_sse.py                 ← SSE protocol: raw events, timing, partial accumulation
+  17_local_serving.py       ← same client, local model via base_url (Ollama/llama.cpp)
 ```
 
 ---
@@ -495,3 +530,24 @@ The repo's [.vscode/settings.json](.vscode/settings.json) also sets
 `python.analysis.typeCheckingMode` to `basic`, which keeps the useful checks
 (undefined names, bad attrs/args) while dropping the strict dict-vs-TypedDict
 complaints.
+
+---
+
+## The series
+
+This is one of eight standalone, hands-on deep dives into building with LLM APIs.
+Each one stands on its own — its own setup, examples, and capstone — and they all
+share the same house style: provider-agnostic, built from scratch (no
+frameworks), offline-first examples, and a real capstone. Do them in any order;
+this sequence builds naturally:
+
+1. [OpenAI API](https://github.com/Ailuue/openai-api-deep-dive) — the API from zero
+2. [Claude API](https://github.com/Ailuue/claude-api-deep-dive) — the same ideas, the Anthropic way
+3. [Prompt Engineering](https://github.com/Ailuue/prompt-engineering-deep-dive) — shape model behavior with better prompts (zero/few-shot, chain-of-thought, roles)
+4. [RAG](https://github.com/Ailuue/rag-deep-dive) — answer questions over your own documents
+5. [Evals](https://github.com/Ailuue/evals-deep-dive) — measure whether a change actually helps
+6. [Agents](https://github.com/Ailuue/agents-deep-dive) — give a model tools and a loop so it can act
+7. [Prompt Injection & Guardrails](https://github.com/Ailuue/prompt-injection-deep-dive) — attack and defend all of the above
+8. [Production](https://github.com/Ailuue/ai-in-production-deep-dive) — operate one app end to end: observability, cost, reliability, caching, guardrails, prompt versioning, eval gates
+
+**You are here: #1 — OpenAI API.**
