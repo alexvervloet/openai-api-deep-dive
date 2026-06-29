@@ -182,6 +182,89 @@ blank screen until the whole answer is ready. Same total time, far better
 perceived responsiveness — which is why chat UIs stream.
 </details>
 
+**Recall (vision, `18_vision.py`).** A text request sends a string for `content`.
+What does an image request send instead, and how does the image itself travel?
+
+<details><summary>▸ Answer</summary>
+
+A **list of parts** — a `text` part and an `image_url` part — in one user message.
+The image is either a URL the model fetches, or a local file inlined as a base64
+`data:` URI. The image is billed as tokens, scaled by its pixel size.
+</details>
+
+**Predict (reasoning, `19_reasoning.py`).** Why does this example set
+`reasoning_effort` instead of `temperature`, and what are `reasoning_tokens`?
+
+<details><summary>▸ Answer</summary>
+
+Reasoning models ignore sampling knobs like `temperature`; you steer how hard they
+think with `reasoning_effort`. The `reasoning_tokens` are the model's **hidden**
+chain of thought — generated before the visible answer, never shown to you, but
+still billed.
+</details>
+
+**Recall (batch, `20_batch_api.py`).** What do you trade to get the Batch API's 50%
+discount, and what ties each answer back to its input?
+
+<details><summary>▸ Answer</summary>
+
+You trade **immediacy** — results land within 24h instead of instantly. Each line's
+`custom_id` is echoed in the results file, so you can match every answer back to the
+request that produced it.
+</details>
+
+**Predict (caching, `21_prompt_caching.py`).** Two requests share a long system
+prompt but ask different questions. Why must the *constant* part come first?
+
+<details><summary>▸ Answer</summary>
+
+Caching only helps the **prefix that's byte-for-byte identical**. Put the constant
+block (system prompt, tool catalog, document) at the front and the variable question
+at the back, and the long prefix is served from cache at a discount on the second
+call (`cached_tokens`).
+</details>
+
+**Do (async, `22_async_concurrency.py`).** It runs 6 prompts sequentially, then 4-at-
+a-time. Why is the concurrent run ~faster, and what is the `Semaphore` protecting?
+
+<details><summary>▸ Answer</summary>
+
+Each request is mostly **idle network waiting**, so overlapping them finishes in
+about the time of the slowest call. The `Semaphore` caps how many run at once, so
+you get the speedup without blowing past your account's **rate limit**.
+</details>
+
+**Recall (moderation, `23_moderation.py`).** Is the moderation endpoint a chat
+model? When do you call it?
+
+<details><summary>▸ Answer</summary>
+
+No — it's a separate, **free** classifier returning category flags + scores. Call it
+on **user input on the way in** and **model output on the way out**, refusing or
+redacting when `flagged` is true.
+</details>
+
+**Predict (logprobs, `24_logprobs.py`).** For a confident yes/no answer vs. a
+genuinely uncertain one, how do the `top_logprobs` differ?
+
+<details><summary>▸ Answer</summary>
+
+A confident answer puts **almost all probability on one token**; an uncertain one
+**spreads** probability across alternatives. That spread is a usable confidence
+signal — auto-accept the confident ones, route the shaky ones to review.
+</details>
+
+**Recall (seed, `25_seed_determinism.py`).** `temperature=0` plus a fixed `seed`
+makes output reproducible — why is it still only "best-effort," and what tells you
+it broke?
+
+<details><summary>▸ Answer</summary>
+
+OpenAI can change the backend, and determinism isn't guaranteed across such changes.
+The `system_fingerprint` field is the tell: if it changes between calls, the backend
+shifted and identical inputs can drift even with the same seed.
+</details>
+
 ---
 
 ## Capstones 9, 10 & 11
