@@ -312,6 +312,73 @@ the server yourself. The example degrades gracefully if no local server is up.
 python examples/17_local_serving.py    # needs a local runtime; prints how to start one
 ```
 
+### Vision — send an image, not just text
+Multimodal models accept images in the same message: the user `content` becomes a
+*list of parts* (text + `image_url`), where the image is either a URL or a local
+file inlined as a base64 `data:` URI. Images are billed as tokens, scaled by pixel
+size. The example reads a public sample image (or your own local file).
+```bash
+python examples/18_vision.py            # or: python examples/18_vision.py my_image.png
+```
+
+### Reasoning models — think first, answer second
+The o-series (and GPT-5 reasoning tiers) generate hidden **reasoning tokens** before
+answering — far better on math/logic/coding. You drop `temperature` and steer with
+`reasoning_effort` instead; `usage` reports the hidden thinking you still pay for.
+```bash
+python examples/19_reasoning.py
+```
+
+### The Batch API — half price for non-urgent work
+For work that isn't interactive (classify 10k reviews, summarize a backlog), upload
+a JSONL of requests and get results within 24h at **50% off**. The example builds a
+tiny batch, submits it, and shows how to poll for and fetch results.
+```bash
+python examples/20_batch_api.py
+```
+
+### Prompt caching — don't re-pay for a repeated prefix
+On OpenAI this is **automatic**: a prompt's long, identical prefix is cached and
+re-billed at a discount on later calls. The one rule is structural — put the
+*constant* part (big system prompt, tool catalog, a document) first, the *variable*
+question last. The example shows `cached_tokens` kicking in.
+```bash
+python examples/21_prompt_caching.py
+```
+
+### Async & concurrency — many requests at once
+A single call is mostly idle waiting on the network, so independent prompts should
+run concurrently. `AsyncOpenAI` + `asyncio.gather` + a `Semaphore` (bounded
+concurrency) finishes a batch in roughly the time of the slowest call, while staying
+under your rate limit. The example times sequential vs. concurrent.
+```bash
+python examples/22_async_concurrency.py
+```
+
+### Moderation — a free safety filter
+A dedicated, **free** classifier that flags hateful/violent/sexual/self-harm content
+with per-category scores. The pattern: moderate user input on the way in and model
+output on the way out, and refuse/redact when flagged.
+```bash
+python examples/23_moderation.py
+```
+
+### Logprobs — how confident was the model?
+With `logprobs=True` / `top_logprobs=k` the API returns the probability of each
+chosen token and the alternatives it weighed. Turn that into a 0–1 confidence — for
+calibrated classification, flagging shaky answers, or debugging.
+```bash
+python examples/24_logprobs.py
+```
+
+### Seed & reproducibility — the same answer twice
+`temperature=0` plus a fixed `seed` makes generation (mostly) deterministic — for
+tests, caching, and reproducible evals. Best-effort, not a guarantee: watch
+`system_fingerprint`, which signals a backend change that can break determinism.
+```bash
+python examples/25_seed_determinism.py
+```
+
 ---
 
 ## 9. The second capstone: `extract.py`
@@ -416,13 +483,28 @@ projects. Further on:
   **reranking** and **evaluation** — enough moving parts to be a deep dive of its
   own.
 - **The context window** — what happens as conversations get long, and smarter
-  ways to manage history than the simple trim in example 12 (summarizing old
-  turns, sliding windows).
+  ways to manage history than the simple trim in example 12 (summarizing old turns,
+  sliding windows). It's a whole dive: [Context Engineering](https://github.com/Ailuue/context-engineering-deep-dive).
 - **Vision & audio** — passing images to multimodal models, speech-to-text.
-- **Streaming + tools together** — the pattern most production assistants use.
+- **Streaming + tools together** — the pattern most production assistants use; built
+  hands-on in the [Agents dive](https://github.com/Ailuue/agents-deep-dive) (streaming
+  inside the tool loop).
 
 Each of these slots neatly on top of the "send messages, get a message" idea you
 started with.
+
+> 📌 **A note on the Responses API.** This dive uses **Chat Completions**
+> (`client.chat.completions.create`) — the long-stable, universal interface that
+> every other provider and local server also implements, which is exactly why it's
+> the right thing to learn first. OpenAI now also offers a newer **Responses API**
+> (`client.responses.create`), which folds tools, state, and multi-step runs into one
+> endpoint and is their recommended default for *new* OpenAI-only apps. The
+> primitives are identical — you still send messages and get a message back, with the
+> same models, streaming, structured outputs, and token accounting — so everything
+> here transfers directly. Reach for Responses when you want its built-in
+> conversation state and server-side tools and don't need provider portability; reach
+> for Chat Completions (this dive) when you want the lowest-common-denominator
+> interface that runs everywhere.
 
 ---
 
@@ -504,6 +586,14 @@ examples/
   15_rich_output.py         ← Markdown, tables & code blocks in the terminal
   16_sse.py                 ← SSE protocol: raw events, timing, partial accumulation
   17_local_serving.py       ← same client, local model via base_url (Ollama/llama.cpp)
+  18_vision.py              ← send an image (URL or local base64) alongside text
+  19_reasoning.py           ← o-series reasoning models: reasoning_effort, hidden tokens
+  20_batch_api.py           ← submit many requests at 50% off, results within 24h
+  21_prompt_caching.py      ← automatic prefix caching; structure prompts to hit it
+  22_async_concurrency.py   ← AsyncOpenAI + asyncio.gather + a Semaphore (throughput)
+  23_moderation.py          ← the free safety classifier (flags + per-category scores)
+  24_logprobs.py            ← token probabilities -> confidence & calibrated classification
+  25_seed_determinism.py    ← temperature=0 + seed for (best-effort) reproducibility
 ```
 
 ---
@@ -535,7 +625,7 @@ complaints.
 
 ## The series
 
-This is one of eight standalone, hands-on deep dives into building with LLM APIs.
+This is one of thirteen standalone, hands-on deep dives into building with LLM APIs — eight core, plus five bonus dives.
 Each one stands on its own — its own setup, examples, and capstone — and they all
 share the same house style: provider-agnostic, built from scratch (no
 frameworks), offline-first examples, and a real capstone. Do them in any order;
@@ -549,5 +639,13 @@ this sequence builds naturally:
 6. [Agents](https://github.com/Ailuue/agents-deep-dive) — give a model tools and a loop so it can act
 7. [Prompt Injection & Guardrails](https://github.com/Ailuue/prompt-injection-deep-dive) — attack and defend all of the above
 8. [Production](https://github.com/Ailuue/ai-in-production-deep-dive) — operate one app end to end: observability, cost, reliability, caching, guardrails, prompt versioning, eval gates
+
+**Bonus dives** — standalone, slotting in where they're most useful:
+
+- [Context Engineering](https://github.com/Ailuue/context-engineering-deep-dive) — manage what's in the window: memory, compaction, assembly
+- [Multimodal](https://github.com/Ailuue/multimodal-deep-dive) — images & audio, not just text
+- [Fine-tuning](https://github.com/Ailuue/fine-tuning-deep-dive) — teach a model new behavior by example
+- [MCP](https://github.com/Ailuue/mcp-deep-dive) — serve tools, data & prompts to any LLM over a standard protocol
+- [Local Models](https://github.com/Ailuue/local-models-deep-dive) — run open-weight models on your own machine
 
 **You are here: #1 — OpenAI API.**
