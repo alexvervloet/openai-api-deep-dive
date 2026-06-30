@@ -59,6 +59,7 @@ def ask(question: str):
         max_tokens=30,
     )
     usage = resp.usage
+    assert usage is not None
     details = getattr(usage, "prompt_tokens_details", None)
     cached = getattr(details, "cached_tokens", 0) if details else 0
     return resp.choices[0].message.content, usage.prompt_tokens, cached
