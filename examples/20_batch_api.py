@@ -86,6 +86,7 @@ def create_batch() -> str:
 def check_batch(batch_id: str) -> None:
     batch = client.batches.retrieve(batch_id)
     counts = batch.request_counts
+    assert counts is not None
     print(f"status: {batch.status}   "
           f"({counts.completed}/{counts.total} done, {counts.failed} failed)")
 
@@ -94,6 +95,7 @@ def check_batch(batch_id: str) -> None:
         return
 
     # --- Step 5: download and print results, matched by custom_id. ---
+    assert batch.output_file_id is not None
     out_text = client.files.content(batch.output_file_id).text
     print("\nResults:")
     for line in out_text.splitlines():
