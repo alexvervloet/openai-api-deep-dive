@@ -49,7 +49,7 @@ async def summarize(topic: str, sem: asyncio.Semaphore) -> str:
             messages=[{"role": "user", "content": f"Explain {topic} in one short sentence."}],
             max_tokens=40,
         )
-        return resp.choices[0].message.content.strip()
+        return (resp.choices[0].message.content or "").strip()
 
 
 async def run_concurrently(max_in_flight: int = 4) -> list[str]:
