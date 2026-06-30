@@ -223,6 +223,7 @@ def main(argv: list[str]) -> int:
 
     # Report what each step cost: embeddings + the answer.
     usage = response.usage
+    assert usage is not None
     gen_cost = 0.0
     try:
         gen_cost = estimate_cost(args.model, usage.prompt_tokens, usage.completion_tokens)
