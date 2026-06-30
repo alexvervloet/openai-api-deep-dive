@@ -49,7 +49,9 @@ def confidence(question: str):
         top_logprobs=5,       # ...and the 5 alternatives at each position
     )
     # One token out, so we look at the first (only) entry.
-    token_info = resp.choices[0].logprobs.content[0]
+    logprobs = resp.choices[0].logprobs
+    assert logprobs is not None and logprobs.content is not None
+    token_info = logprobs.content[0]
     answer = token_info.token
     prob = math.exp(token_info.logprob)  # logprob -> probability in [0, 1]
     alternatives = [
