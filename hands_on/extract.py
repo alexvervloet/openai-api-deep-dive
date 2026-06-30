@@ -193,7 +193,7 @@ def main(argv: list[str]) -> int:
     # reply is parsed + validated back into an Extraction instance for us.
     response = client.chat.completions.parse(
         model=args.model,
-        messages=messages,
+        messages=messages,  # type: ignore[arg-type]
         response_format=Extraction,
     )
     message = response.choices[0].message
