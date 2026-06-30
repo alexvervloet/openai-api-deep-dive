@@ -75,7 +75,7 @@ else:
 response = client.chat.completions.create(
     model="gpt-4o-mini",  # the -mini models are multimodal too
     messages=[
-        {
+        {  # type: ignore[arg-type]
             "role": "user",
             "content": [
                 {"type": "text", "text": "Describe this image in two sentences. What stands out?"},
@@ -86,6 +86,7 @@ response = client.chat.completions.create(
 )
 
 print(response.choices[0].message.content)
+assert response.usage is not None
 print(f"\n[tokens — prompt: {response.usage.prompt_tokens}, "
       f"completion: {response.usage.completion_tokens}]")
 print("Notice the prompt tokens: the image itself is most of them. Bigger image = more tokens.")
