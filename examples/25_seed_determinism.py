@@ -50,7 +50,7 @@ def generate(seed=None):
         seed=seed,         # ...and fix the seed for the rest
         max_tokens=20,
     )
-    return resp.choices[0].message.content.strip(), resp.system_fingerprint
+    return (resp.choices[0].message.content or "").strip(), resp.system_fingerprint
 
 
 print("With a FIXED seed (42), temperature 0 — expect identical (or near-identical) output:\n")
