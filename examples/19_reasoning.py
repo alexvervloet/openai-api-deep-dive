@@ -66,6 +66,7 @@ print(response.choices[0].message.content)
 
 # The hidden thinking is billed but never shown. Inspect it via usage:
 usage = response.usage
+assert usage is not None
 details = getattr(usage, "completion_tokens_details", None)
 reasoning = getattr(details, "reasoning_tokens", None) if details else None
 print(f"\n[tokens — prompt: {usage.prompt_tokens}, "
