@@ -21,7 +21,7 @@ Two functions live here:
                                  overhead the API adds.
 """
 
-import tiktoken
+import tiktoken  # type: ignore[import-untyped]
 
 
 def _encoding_for(model: str) -> tiktoken.Encoding:
