@@ -68,8 +68,8 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 
 import openai
 from dotenv import load_dotenv
-from fastapi import FastAPI, Request
-from fastapi.responses import FileResponse, StreamingResponse
+from fastapi import FastAPI, Request  # type: ignore[import-untyped]
+from fastapi.responses import FileResponse, StreamingResponse  # type: ignore[import-untyped]
 from openai import AsyncOpenAI
 from pydantic import BaseModel
 
