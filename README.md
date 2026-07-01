@@ -371,10 +371,15 @@ calibrated classification, flagging shaky answers, or debugging.
 python examples/24_logprobs.py
 ```
 
-### Seed & reproducibility — the same answer twice
-`temperature=0` plus a fixed `seed` makes generation (mostly) deterministic — for
-tests, caching, and reproducible evals. Best-effort, not a guarantee: watch
-`system_fingerprint`, which signals a backend change that can break determinism.
+### Seed & reproducibility — pinning down a random model
+A fixed `seed` makes the same inputs reproduce the same output — for tests, caching,
+and reproducible evals — even with real randomness in play. The example runs at
+`temperature=0.9` specifically so you can see the seed do the work: the same seed
+twice gives identical output, no seed twice gives different output. (At
+`temperature=0` the model is already deterministic, so the seed wouldn't visibly be
+doing anything — in production you'd combine both for the strongest guarantee.)
+Best-effort either way, not a guarantee: watch `system_fingerprint`, which signals a
+backend change that can break determinism.
 ```bash
 python examples/25_seed_determinism.py
 ```
@@ -593,7 +598,7 @@ examples/
   22_async_concurrency.py   ← AsyncOpenAI + asyncio.gather + a Semaphore (throughput)
   23_moderation.py          ← the free safety classifier (flags + per-category scores)
   24_logprobs.py            ← token probabilities -> confidence & calibrated classification
-  25_seed_determinism.py    ← temperature=0 + seed for (best-effort) reproducibility
+  25_seed_determinism.py    ← seed pins down randomness (best-effort reproducibility)
 ```
 
 ---
