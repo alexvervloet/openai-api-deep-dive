@@ -254,15 +254,20 @@ A confident answer puts **almost all probability on one token**; an uncertain on
 signal — auto-accept the confident ones, route the shaky ones to review.
 </details>
 
-**Recall (seed, `25_seed_determinism.py`).** `temperature=0` plus a fixed `seed`
-makes output reproducible — why is it still only "best-effort," and what tells you
-it broke?
+**Recall (seed, `25_seed_determinism.py`).** The example fixes `seed=42` at
+`temperature=0.9` rather than `temperature=0` — why, and why is the result still only
+"best-effort," not a guarantee?
 
 <details><summary>▸ Answer</summary>
 
-OpenAI can change the backend, and determinism isn't guaranteed across such changes.
-The `system_fingerprint` field is the tell: if it changes between calls, the backend
-shifted and identical inputs can drift even with the same seed.
+At `temperature=0` the model is already deterministic (always the most likely token),
+so a fixed seed wouldn't visibly be doing anything — you couldn't tell its effect
+apart from temperature=0's own determinism. Running at `temperature=0.9` keeps real
+randomness in play, so a matching seed across two calls visibly pins the output down,
+while an unset seed visibly doesn't. Either way, OpenAI can change the backend, and
+determinism isn't guaranteed across such changes — the `system_fingerprint` field is
+the tell: if it changes between calls, the backend shifted and identical inputs can
+drift even with the same seed.
 </details>
 
 ---
