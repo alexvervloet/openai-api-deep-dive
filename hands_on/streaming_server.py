@@ -75,7 +75,7 @@ from pydantic import BaseModel
 
 load_dotenv()
 if not os.getenv("OPENAI_API_KEY"):
-    sys.exit("Set OPENAI_API_KEY in .env and try again.")
+    sys.exit("Set OPENAI_API_KEY via secrun (see SECRETS.md) and try again.")
 
 # Async client — essential for FastAPI so the event loop isn't blocked while
 # waiting for the API. Each request gets its own concurrent slot.
