@@ -14,7 +14,7 @@ A chat is a transcript of messages, each tagged with a role:
 
 Run it:
 
-    python examples/02_roles.py
+    secrun python examples/02_roles.py
 
 Try editing the system message (e.g. "You are a grumpy pirate") and watch the
 tone of the answer change without touching the question at all. That's the power
@@ -30,7 +30,7 @@ from openai.types.chat import ChatCompletionMessageParam
 
 load_dotenv()
 if not os.getenv("OPENAI_API_KEY"):
-    sys.exit("Set OPENAI_API_KEY (copy .env.example to .env) and try again.")
+    sys.exit("Set OPENAI_API_KEY via secrun (see SECRETS.md) and try again.")
 
 client = OpenAI()
 
