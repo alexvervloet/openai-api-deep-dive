@@ -19,16 +19,16 @@ It ties together three things from the examples:
 Examples
 --------
   # Extract action items from the sample meeting notes
-  python hands_on/extract.py snippets/meeting_notes.txt
+  secrun python hands_on/extract.py snippets/meeting_notes.txt
 
   # See tokens + estimated cost without calling the API
-  python hands_on/extract.py snippets/meeting_notes.txt --dry-run
+  secrun python hands_on/extract.py snippets/meeting_notes.txt --dry-run
 
   # Use a more capable model for messier text
-  python hands_on/extract.py snippets/meeting_notes.txt --model gpt-4o
+  secrun python hands_on/extract.py snippets/meeting_notes.txt --model gpt-4o
 
   # Get the raw validated JSON instead of the pretty tables
-  python hands_on/extract.py snippets/meeting_notes.txt --json
+  secrun python hands_on/extract.py snippets/meeting_notes.txt --json
 """
 
 import argparse
@@ -179,8 +179,8 @@ def main(argv: list[str]) -> int:
     load_dotenv()
     if not os.getenv("OPENAI_API_KEY"):
         print(
-            "\nOPENAI_API_KEY is not set. Copy .env.example to .env and add your "
-            "key, or run with --dry-run to skip the API call.",
+            "\nOPENAI_API_KEY is not set. Store it in your keychain and run under `secrun` "
+            "(see SECRETS.md), or run with --dry-run to skip the API call.",
             file=sys.stderr,
         )
         return 1
