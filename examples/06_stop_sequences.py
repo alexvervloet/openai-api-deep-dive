@@ -13,7 +13,7 @@ Uses:
 
 Run it:
 
-    python examples/06_stop_sequences.py
+    secrun python examples/06_stop_sequences.py
 
 The first call lets the model count freely; the second stops it the instant it
 tries to write "4", so you only get items 1–3.
@@ -27,7 +27,7 @@ from openai import OpenAI
 
 load_dotenv()
 if not os.getenv("OPENAI_API_KEY"):
-    sys.exit("Set OPENAI_API_KEY (copy .env.example to .env) and try again.")
+    sys.exit("Set OPENAI_API_KEY via secrun (see SECRETS.md) and try again.")
 
 client = OpenAI()
 
