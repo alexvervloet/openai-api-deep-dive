@@ -14,19 +14,19 @@ is exposed as a command-line flag with a short explanation in --help.
 Examples
 --------
   # Simplest form: explain a file
-  python hands_on/ask.py snippets/buggy.py "What does this code do?"
+  secrun python hands_on/ask.py snippets/buggy.py "What does this code do?"
 
   # Find a bug, with a more capable model
-  python hands_on/ask.py snippets/buggy.py "Is there a bug here?" --model gpt-4o
+  secrun python hands_on/ask.py snippets/buggy.py "Is there a bug here?" --model gpt-4o
 
   # See the cost *before* spending anything (no API call is made)
-  python hands_on/ask.py snippets/buggy.py "Explain this" --dry-run
+  secrun python hands_on/ask.py snippets/buggy.py "Explain this" --dry-run
 
   # Turn creativity down to 0 for deterministic, focused answers
-  python hands_on/ask.py snippets/buggy.py "Rewrite this cleanly" --temperature 0
+  secrun python hands_on/ask.py snippets/buggy.py "Rewrite this cleanly" --temperature 0
 
   # Cap the answer length and stop at a marker
-  python hands_on/ask.py snippets/buggy.py "List 3 issues" --max-tokens 200 --stop "4."
+  secrun python hands_on/ask.py snippets/buggy.py "List 3 issues" --max-tokens 200 --stop "4."
 """
 
 import argparse
@@ -180,8 +180,8 @@ def main(argv: list[str]) -> int:
     load_dotenv()
     if not os.getenv("OPENAI_API_KEY"):
         print(
-            "\nOPENAI_API_KEY is not set. Copy .env.example to .env and add your "
-            "key, or run with --dry-run to skip the API call.",
+            "\nOPENAI_API_KEY is not set. Store it in your keychain and run under `secrun` "
+            "(see SECRETS.md), or run with --dry-run to skip the API call.",
             file=sys.stderr,
         )
         return 1
