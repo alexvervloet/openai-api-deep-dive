@@ -5,7 +5,7 @@ Example 01 — Your first chat completion.
 The whole API in five lines. You send a list of messages; you get back a
 message. Run it:
 
-    python examples/01_basic_chat.py
+    secrun python examples/01_basic_chat.py
 
 What to notice:
   - `client = OpenAI()` reads your key from the OPENAI_API_KEY environment
@@ -24,7 +24,7 @@ from openai import OpenAI
 
 load_dotenv()
 if not os.getenv("OPENAI_API_KEY"):
-    sys.exit("Set OPENAI_API_KEY (copy .env.example to .env) and try again.")
+    sys.exit("Set OPENAI_API_KEY via secrun (see SECRETS.md) and try again.")
 
 client = OpenAI()
 
