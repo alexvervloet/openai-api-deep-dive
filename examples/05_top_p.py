@@ -17,7 +17,7 @@ once, because they interact in confusing ways. Pick one knob and learn it.
 
 Run it:
 
-    python examples/05_top_p.py
+    secrun python examples/05_top_p.py
 """
 
 import os
@@ -28,7 +28,7 @@ from openai import OpenAI
 
 load_dotenv()
 if not os.getenv("OPENAI_API_KEY"):
-    sys.exit("Set OPENAI_API_KEY (copy .env.example to .env) and try again.")
+    sys.exit("Set OPENAI_API_KEY via secrun (see SECRETS.md) and try again.")
 
 client = OpenAI()
 
