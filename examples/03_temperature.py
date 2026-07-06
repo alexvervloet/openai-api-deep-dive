@@ -13,7 +13,7 @@ Example 03 — temperature.
 
 Run it:
 
-    python examples/03_temperature.py
+    secrun python examples/03_temperature.py
 
 We ask the same creative question at three temperatures and print the results
 side by side. Notice how 0.0 tends to repeat itself across runs while the high
@@ -28,7 +28,7 @@ from openai import OpenAI
 
 load_dotenv()
 if not os.getenv("OPENAI_API_KEY"):
-    sys.exit("Set OPENAI_API_KEY (copy .env.example to .env) and try again.")
+    sys.exit("Set OPENAI_API_KEY via secrun (see SECRETS.md) and try again.")
 
 client = OpenAI()
 
