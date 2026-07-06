@@ -17,7 +17,7 @@ Why bother? Privacy (data never leaves the machine), cost (no per-token bill),
 and offline use. The trade-off is you run and scale the server yourself, and the
 small local models are less capable than the hosted frontier ones.
 
-    python examples/17_local_serving.py
+    secrun python examples/17_local_serving.py
 
 This example needs a local server running; with none, it prints how to start one
 and exits cleanly (no key, no crash).
