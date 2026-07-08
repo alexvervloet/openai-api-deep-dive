@@ -19,10 +19,10 @@ sending if you care about cost.
 
 Run it (uses a public sample image):
 
-    python examples/18_vision.py
+    secrun python examples/18_vision.py
 
     # or point it at your own local image (sent as base64):
-    python examples/18_vision.py path/to/image.png
+    secrun python examples/18_vision.py path/to/image.png
 """
 
 import base64
@@ -34,7 +34,7 @@ from openai import OpenAI
 
 load_dotenv()
 if not os.getenv("OPENAI_API_KEY"):
-    sys.exit("Set OPENAI_API_KEY (copy .env.example to .env) and try again.")
+    sys.exit("Set OPENAI_API_KEY via secrun (see SECRETS.md) and try again.")
 
 client = OpenAI()
 
