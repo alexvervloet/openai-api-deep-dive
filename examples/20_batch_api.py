@@ -24,8 +24,8 @@ shows you how to check on it and fetch results. Re-run with the id to poll.
 
 Run it:
 
-    python examples/20_batch_api.py            # create a batch
-    python examples/20_batch_api.py <batch_id> # check status / fetch results
+    secrun python examples/20_batch_api.py            # create a batch
+    secrun python examples/20_batch_api.py <batch_id> # check status / fetch results
 """
 
 import io
@@ -38,7 +38,7 @@ from openai import OpenAI
 
 load_dotenv()
 if not os.getenv("OPENAI_API_KEY"):
-    sys.exit("Set OPENAI_API_KEY (copy .env.example to .env) and try again.")
+    sys.exit("Set OPENAI_API_KEY via secrun (see SECRETS.md) and try again.")
 
 client = OpenAI()
 
@@ -79,7 +79,7 @@ def create_batch() -> str:
     )
     print(f"[created batch: {batch.id}  status={batch.status}]")
     print("\nThe batch is now processing (50% cheaper than live calls). Check on it with:")
-    print(f"    python examples/20_batch_api.py {batch.id}")
+    print(f"    secrun python examples/20_batch_api.py {batch.id}")
     return batch.id
 
 
