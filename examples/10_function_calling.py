@@ -22,7 +22,7 @@ actually executes.
 
 Run it:
 
-    python examples/10_function_calling.py
+    secrun python examples/10_function_calling.py
 """
 
 import json
@@ -35,7 +35,7 @@ from openai.types.chat import ChatCompletionMessageParam, ChatCompletionToolPara
 
 load_dotenv()
 if not os.getenv("OPENAI_API_KEY"):
-    sys.exit("Set OPENAI_API_KEY (copy .env.example to .env) and try again.")
+    sys.exit("Set OPENAI_API_KEY via secrun (see SECRETS.md) and try again.")
 
 client = OpenAI()
 
