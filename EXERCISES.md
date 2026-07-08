@@ -290,7 +290,7 @@ further tokens generated, nothing billed for output you'd never see. Detecting
 disconnects is a real production cost lever, not just tidiness.
 </details>
 
-**Predict, then run (`rag.py`).** Run `python hands_on/rag.py`, then run it again
+**Predict, then run (`rag.py`).** Run `secrun python hands_on/rag.py`, then run it again
 with `--no-rag`. Will the answer change? Which one can you trust, and why?
 
 <details><summary>▸ Answer</summary>
