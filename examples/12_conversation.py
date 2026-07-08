@@ -20,7 +20,7 @@ the conversation goes, which is all a chat app really is.
 
 Run it (type a few messages, then `quit`):
 
-    python examples/12_conversation.py
+    secrun python examples/12_conversation.py
 
 Try this to feel the statelessness: tell it your name, then ask "what's my
 name?". It works — because the earlier turns are still in the list. Now look at
@@ -37,7 +37,7 @@ from openai.types.chat import ChatCompletionMessageParam
 
 load_dotenv()
 if not os.getenv("OPENAI_API_KEY"):
-    sys.exit("Set OPENAI_API_KEY (copy .env.example to .env) and try again.")
+    sys.exit("Set OPENAI_API_KEY via secrun (see SECRETS.md) and try again.")
 
 client = OpenAI()
 
