@@ -34,13 +34,13 @@ source .venv/bin/activate          # Windows: .venv\Scripts\activate
 # 2. Install dependencies
 pip install -r requirements.txt
 
-# 3. Add your API key
-cp .env.example .env
-#    ...then open .env and paste your key from
-#    https://platform.openai.com/api-keys
+# 3. Set up your API key (it does NOT go in .env)
+cp .env.example .env               # optional; holds no secrets
+#    Store your key in your OS keychain and run scripts with `secrun` — 2-minute
+#    setup in ../SECRETS.md. Get a key: https://platform.openai.com/api-keys
 
 # 4. Confirm everything is wired up correctly (makes no API call, costs nothing)
-python check_setup.py
+secrun python check_setup.py
 ```
 
 `check_setup.py` is your first stop if anything goes wrong: it checks your Python
@@ -56,7 +56,7 @@ Green across the board means you're ready for Section 2.
 ## 2. Your first request
 
 ```bash
-python examples/01_basic_chat.py
+secrun python examples/01_basic_chat.py
 ```
 
 Open [examples/01_basic_chat.py](examples/01_basic_chat.py) and read it — it's
@@ -93,7 +93,7 @@ A conversation is a transcript, and every line is tagged with a **role**:
   only exists in the list you send each time.
 
 ```bash
-python examples/02_roles.py
+secrun python examples/02_roles.py
 ```
 
 **Experiment:** open [examples/02_roles.py](examples/02_roles.py), change the
@@ -111,7 +111,7 @@ example.
 `0.0` = focused & repeatable · `0.7` = balanced (default) · `1.5+` = wild.
 For code and facts, go **low**. For brainstorming, go high.
 ```bash
-python examples/03_temperature.py
+secrun python examples/03_temperature.py
 ```
 
 ### max_tokens — a hard cap on the answer's length
@@ -119,21 +119,21 @@ Caps **output** tokens (not input). The model is cut off when the budget runs
 out — possibly mid-sentence. Watch `finish_reason`: `"length"` means it was
 truncated; `"stop"` means it finished naturally.
 ```bash
-python examples/04_max_tokens.py
+secrun python examples/04_max_tokens.py
 ```
 
 ### top_p — how many options the model may consider
 "Nucleus sampling." `0.1` = only the most obvious tokens; `1.0` = everything
 (default). **Tune temperature OR top_p, not both** — they interact confusingly.
 ```bash
-python examples/05_top_p.py
+secrun python examples/05_top_p.py
 ```
 
 ### stop — make generation halt at a marker
 A string (up to 4) that ends generation the moment it would appear. The stop
 text itself isn't included. Great for cutting lists or hitting a delimiter.
 ```bash
-python examples/06_stop_sequences.py
+secrun python examples/06_stop_sequences.py
 ```
 
 **Quick reference:**
@@ -197,18 +197,18 @@ see the *actual* usage and cost after.
 
 ```bash
 # See the cost first — no API call, no key needed:
-python hands_on/ask.py snippets/buggy.py "Is there a bug here?" --dry-run
+secrun python hands_on/ask.py snippets/buggy.py "Is there a bug here?" --dry-run
 
-# For real (needs your key in .env):
-python hands_on/ask.py snippets/buggy.py "Is there a bug here?"
+# For real (needs your key; run under secrun):
+secrun python hands_on/ask.py snippets/buggy.py "Is there a bug here?"
 
 # Now turn the knobs you just learned:
-python hands_on/ask.py snippets/buggy.py "Rewrite this cleanly" --temperature 0
-python hands_on/ask.py snippets/buggy.py "List the issues" --max-tokens 200 --stop "4."
-python hands_on/ask.py snippets/buggy.py "Explain this" --model gpt-4o
+secrun python hands_on/ask.py snippets/buggy.py "Rewrite this cleanly" --temperature 0
+secrun python hands_on/ask.py snippets/buggy.py "List the issues" --max-tokens 200 --stop "4."
+secrun python hands_on/ask.py snippets/buggy.py "Explain this" --model gpt-4o
 ```
 
-Run `python hands_on/ask.py --help` to see every knob explained inline. Read the source
+Run `secrun python hands_on/ask.py --help` to see every knob explained inline. Read the source
 in [hands_on/ask.py](hands_on/ask.py) — it's commented as a tutorial, especially `build_messages()`
 (how the request is assembled) and the usage/cost reporting at the end.
 
@@ -228,7 +228,7 @@ on "send messages, get a message."
 With `stream=True` the response arrives in small chunks as it's generated, so the
 user sees text appear immediately instead of waiting for the whole thing.
 ```bash
-python examples/08_streaming.py
+secrun python examples/08_streaming.py
 ```
 
 ### Structured outputs — make the model return real JSON
@@ -236,7 +236,7 @@ Force the reply to be valid JSON, or even match an exact schema you define
 (`response_format` with `"strict": True`). The end of fragile "please reply in
 JSON" prompting.
 ```bash
-python examples/09_structured_outputs.py
+secrun python examples/09_structured_outputs.py
 ```
 
 ### Function / tool calling — let the model use your code
@@ -244,7 +244,7 @@ You describe functions; the model decides when to call one and with what
 arguments; *you* run it and feed the result back. This is how a model gets to
 actually *do* things (query a DB, hit an API).
 ```bash
-python examples/10_function_calling.py
+secrun python examples/10_function_calling.py
 ```
 
 ### Embeddings — turn text into vectors for search & similarity
@@ -253,7 +253,7 @@ capturing meaning. The foundation of semantic search and retrieval (RAG). The
 example ranks sentences by similarity to a query — including ones that share *no
 words* with it.
 ```bash
-python examples/11_embeddings.py
+secrun python examples/11_embeddings.py
 ```
 
 ### Multi-turn conversations — the API has no memory
@@ -261,7 +261,7 @@ Each request is stateless: the model remembers nothing. A chatbot that "remember
 is just *you* re-sending the whole `messages` list every turn, appending each new
 user and assistant message. The example is a tiny REPL that grows that list.
 ```bash
-python examples/12_conversation.py
+secrun python examples/12_conversation.py
 ```
 
 ### Error handling & retries — surviving the real world
@@ -270,7 +270,7 @@ retries transient failures (429/5xx/connection) with backoff; your job is to tun
 `timeout`/`max_retries` and catch the *typed* exceptions so "fix your request"
 errors are handled differently from "try again later" ones.
 ```bash
-python examples/13_error_handling.py
+secrun python examples/13_error_handling.py
 ```
 
 ### Pydantic validation — typed, validated responses
@@ -279,7 +279,7 @@ your shape as a **Pydantic model** and pass it as `response_format`. The SDK sen
 the schema, constrains the model, and hands back a *validated instance* — typed
 attributes, enforced constraints, editor autocomplete.
 ```bash
-python examples/14_pydantic_validation.py
+secrun python examples/14_pydantic_validation.py
 ```
 
 ### Formatting output — Markdown, tables & code blocks
@@ -288,7 +288,7 @@ Models answer in Markdown; dumped raw to a terminal it's a mess of literal
 real tables in the terminal — the difference between output you skim and output
 you squint at.
 ```bash
-python examples/15_rich_output.py
+secrun python examples/15_rich_output.py
 ```
 
 ### Server-Sent Events (SSE) — the protocol under streaming
@@ -298,7 +298,7 @@ parsing, but understanding the wire format is essential when you build a backend
 that forwards tokens to a browser. This example shows raw events, per-token
 timing, and partial response accumulation.
 ```bash
-python examples/16_sse.py
+secrun python examples/16_sse.py
 ```
 
 ### Local models — the same client, a different `base_url`
@@ -309,7 +309,7 @@ non-empty `api_key`, and everything else (roles, knobs, streaming, usage) works
 unchanged. Privacy, no per-token bill, and offline use, in exchange for running
 the server yourself. The example degrades gracefully if no local server is up.
 ```bash
-python examples/17_local_serving.py    # needs a local runtime; prints how to start one
+secrun python examples/17_local_serving.py    # needs a local runtime; prints how to start one
 ```
 
 ### Vision — send an image, not just text
@@ -318,7 +318,7 @@ Multimodal models accept images in the same message: the user `content` becomes 
 file inlined as a base64 `data:` URI. Images are billed as tokens, scaled by pixel
 size. The example reads a public sample image (or your own local file).
 ```bash
-python examples/18_vision.py            # or: python examples/18_vision.py my_image.png
+secrun python examples/18_vision.py            # or: secrun python examples/18_vision.py my_image.png
 ```
 
 ### Reasoning models — think first, answer second
@@ -326,7 +326,7 @@ The o-series (and GPT-5 reasoning tiers) generate hidden **reasoning tokens** be
 answering — far better on math/logic/coding. You drop `temperature` and steer with
 `reasoning_effort` instead; `usage` reports the hidden thinking you still pay for.
 ```bash
-python examples/19_reasoning.py
+secrun python examples/19_reasoning.py
 ```
 
 ### The Batch API — half price for non-urgent work
@@ -334,7 +334,7 @@ For work that isn't interactive (classify 10k reviews, summarize a backlog), upl
 a JSONL of requests and get results within 24h at **50% off**. The example builds a
 tiny batch, submits it, and shows how to poll for and fetch results.
 ```bash
-python examples/20_batch_api.py
+secrun python examples/20_batch_api.py
 ```
 
 ### Prompt caching — don't re-pay for a repeated prefix
@@ -343,7 +343,7 @@ re-billed at a discount on later calls. The one rule is structural — put the
 *constant* part (big system prompt, tool catalog, a document) first, the *variable*
 question last. The example shows `cached_tokens` kicking in.
 ```bash
-python examples/21_prompt_caching.py
+secrun python examples/21_prompt_caching.py
 ```
 
 ### Async & concurrency — many requests at once
@@ -352,7 +352,7 @@ run concurrently. `AsyncOpenAI` + `asyncio.gather` + a `Semaphore` (bounded
 concurrency) finishes a batch in roughly the time of the slowest call, while staying
 under your rate limit. The example times sequential vs. concurrent.
 ```bash
-python examples/22_async_concurrency.py
+secrun python examples/22_async_concurrency.py
 ```
 
 ### Moderation — a free safety filter
@@ -360,7 +360,7 @@ A dedicated, **free** classifier that flags hateful/violent/sexual/self-harm con
 with per-category scores. The pattern: moderate user input on the way in and model
 output on the way out, and refuse/redact when flagged.
 ```bash
-python examples/23_moderation.py
+secrun python examples/23_moderation.py
 ```
 
 ### Logprobs — how confident was the model?
@@ -368,7 +368,7 @@ With `logprobs=True` / `top_logprobs=k` the API returns the probability of each
 chosen token and the alternatives it weighed. Turn that into a 0–1 confidence — for
 calibrated classification, flagging shaky answers, or debugging.
 ```bash
-python examples/24_logprobs.py
+secrun python examples/24_logprobs.py
 ```
 
 ### Seed & reproducibility — pinning down a random model
@@ -381,7 +381,7 @@ doing anything — in production you'd combine both for the strongest guarantee.
 Best-effort either way, not a guarantee: watch `system_fingerprint`, which signals a
 backend change that can break determinism.
 ```bash
-python examples/25_seed_determinism.py
+secrun python examples/25_seed_determinism.py
 ```
 
 ---
@@ -395,13 +395,13 @@ shows it as a Markdown summary and a real table. It's where examples 14
 
 ```bash
 # See tokens + cost first — no API call:
-python hands_on/extract.py snippets/meeting_notes.txt --dry-run
+secrun python hands_on/extract.py snippets/meeting_notes.txt --dry-run
 
 # Extract action items (owner, due date, inferred priority) into a table:
-python hands_on/extract.py snippets/meeting_notes.txt
+secrun python hands_on/extract.py snippets/meeting_notes.txt
 
 # Want the raw validated JSON instead? (e.g. to pipe into another tool)
-python hands_on/extract.py snippets/meeting_notes.txt --json
+secrun python hands_on/extract.py snippets/meeting_notes.txt --json
 ```
 
 Read the source in [hands_on/extract.py](hands_on/extract.py): the `Extraction` / `ActionItem`
@@ -453,16 +453,16 @@ window — RAG just decides what to put there.**
 
 ```bash
 # Answer the built-in demo question from the knowledge base:
-python hands_on/rag.py
+secrun python hands_on/rag.py
 
 # Ask your own:
-python hands_on/rag.py "Can I get a refund?"
+secrun python hands_on/rag.py "Can I get a refund?"
 
 # The killer contrast — the same question with NO retrieved context:
-python hands_on/rag.py "How long are deleted notes kept?" --no-rag
+secrun python hands_on/rag.py "How long are deleted notes kept?" --no-rag
 
 # See exactly what gets retrieved and what prompt gets sent:
-python hands_on/rag.py "What plans are there?" -k 5 --show-prompt
+secrun python hands_on/rag.py "What plans are there?" -k 5 --show-prompt
 ```
 
 The knowledge base is about a *made-up* app, so the model can't fall back on
@@ -489,10 +489,10 @@ projects. Further on:
   own.
 - **The context window** — what happens as conversations get long, and smarter
   ways to manage history than the simple trim in example 12 (summarizing old turns,
-  sliding windows). It's a whole dive: [Context Engineering](https://github.com/Ailuue/context-engineering-deep-dive).
+  sliding windows). It's a whole dive: [Context Engineering](https://github.com/alexvervloet/context-engineering-deep-dive).
 - **Vision & audio** — passing images to multimodal models, speech-to-text.
 - **Streaming + tools together** — the pattern most production assistants use; built
-  hands-on in the [Agents dive](https://github.com/Ailuue/agents-deep-dive) (streaming
+  hands-on in the [Agents dive](https://github.com/alexvervloet/agents-deep-dive) (streaming
   inside the tool loop).
 
 Each of these slots neatly on top of the "send messages, get a message" idea you
@@ -515,13 +515,13 @@ started with.
 
 ## Troubleshooting
 
-Hit a snag? Run `python check_setup.py` first — it catches most problems. The
+Hit a snag? Run `secrun python check_setup.py` first — it catches most problems. The
 rest, by the error you see:
 
 | What you see | What it means / the fix |
 |--------------|-------------------------|
 | `ModuleNotFoundError: No module named 'openai'` | Dependencies aren't installed (or your venv isn't active). Run `source .venv/bin/activate` then `pip install -r requirements.txt`. |
-| `Set OPENAI_API_KEY ...` on every script | No key found. `cp .env.example .env`, paste your real key, save. (The offline token/cost parts in Sections 5–6 still run without a key.) |
+| `Set OPENAI_API_KEY ...` on every script | No key found. Store it in your keychain and run the script under `secrun` — see [SECRETS.md](../SECRETS.md). (The offline token/cost parts in Sections 5–6 still run without a key.) |
 | `AuthenticationError` / 401 | The key is present but wrong — expired, revoked, or a typo. Make a fresh one at the [API keys page](https://platform.openai.com/api-keys). |
 | `RateLimitError` / 429 | Too many requests, or you're out of credit. Wait a moment, or check your billing/usage in the dashboard. |
 | `NotFoundError` / 404 about the model | A model name was mistyped or your account can't access it. The examples use widely-available IDs; if you changed one, check it against the [models list](https://platform.openai.com/docs/models). |
@@ -551,7 +551,7 @@ real deployment. Here's the map from each shortcut to what production uses:
 These shortcuts are right for learning and wrong for production. All seven
 concerns — observability, cost, reliability, caching, guardrails, prompt
 versioning, and eval gates — are built from scratch and wired into one running
-app in **[Production](https://github.com/Ailuue/ai-in-production-deep-dive)** (#8 in the
+app in **[Production](https://github.com/alexvervloet/ai-in-production-deep-dive)** (#8 in the
 series). It runs **offline on a mock provider**, so you can see the whole ops
 machinery with no key and no cost.
 
@@ -630,29 +630,30 @@ complaints.
 
 ## The series
 
-This is one of thirteen standalone, hands-on deep dives into building with LLM APIs — eight core, plus five bonus dives.
+This is one of sixteen standalone, hands-on deep dives into building with LLM APIs — eight core, plus eight bonus dives.
 Each one stands on its own — its own setup, examples, and capstone — and they all
 share the same house style: provider-agnostic, built from scratch (no
 frameworks), offline-first examples, and a real capstone. Do them in any order;
 this sequence builds naturally:
 
-1. [OpenAI API](https://github.com/Ailuue/openai-api-deep-dive) — the API from zero
-2. [Claude API](https://github.com/Ailuue/claude-api-deep-dive) — the same ideas, the Anthropic way
-3. [Prompt Engineering](https://github.com/Ailuue/prompt-engineering-deep-dive) — shape model behavior with better prompts (zero/few-shot, chain-of-thought, roles)
-4. [RAG](https://github.com/Ailuue/rag-deep-dive) — answer questions over your own documents
-5. [Evals](https://github.com/Ailuue/evals-deep-dive) — measure whether a change actually helps
-6. [Agents](https://github.com/Ailuue/agents-deep-dive) — give a model tools and a loop so it can act
-7. [Prompt Injection & Guardrails](https://github.com/Ailuue/prompt-injection-deep-dive) — attack and defend all of the above
-8. [Production](https://github.com/Ailuue/ai-in-production-deep-dive) — operate one app end to end: observability, cost, reliability, caching, guardrails, prompt versioning, eval gates
+1. [OpenAI API](https://github.com/alexvervloet/openai-api-deep-dive) — the API from zero
+2. [Claude API](https://github.com/alexvervloet/claude-api-deep-dive) — the same ideas, the Anthropic way
+3. [Prompt Engineering](https://github.com/alexvervloet/prompt-engineering-deep-dive) — shape model behavior with better prompts (zero/few-shot, chain-of-thought, roles)
+4. [RAG](https://github.com/alexvervloet/rag-deep-dive) — answer questions over your own documents
+5. [Evals](https://github.com/alexvervloet/evals-deep-dive) — measure whether a change actually helps
+6. [Agents](https://github.com/alexvervloet/agents-deep-dive) — give a model tools and a loop so it can act
+7. [Prompt Injection & Guardrails](https://github.com/alexvervloet/prompt-injection-deep-dive) — attack and defend all of the above
+8. [Production](https://github.com/alexvervloet/ai-in-production-deep-dive) — operate one app end to end: observability, cost, reliability, caching, guardrails, prompt versioning, eval gates
 
 **Bonus dives** — standalone, slotting in where they're most useful:
 
-- [Context Engineering](https://github.com/Ailuue/context-engineering-deep-dive) — manage what's in the window: memory, compaction, assembly
-- [Multimodal](https://github.com/Ailuue/multimodal-deep-dive) — images & audio, not just text
-- [Fine-tuning](https://github.com/Ailuue/fine-tuning-deep-dive) — teach a model new behavior by example
-- [MCP](https://github.com/Ailuue/mcp-deep-dive) — serve tools, data & prompts to any LLM over a standard protocol
-- [Local Models](https://github.com/Ailuue/local-models-deep-dive) — run open-weight models on your own machine
-- [Agent Harnesses](https://github.com/Ailuue/agent-harness-deep-dive) — build on the loop: hooks, permissions, sandboxing, subagents
-- [Realtime Voice](https://github.com/Ailuue/realtime-voice-deep-dive) — low-latency speech-to-speech agents
+- [Context Engineering](https://github.com/alexvervloet/context-engineering-deep-dive) — manage what's in the window: memory, compaction, assembly
+- [Multimodal](https://github.com/alexvervloet/multimodal-deep-dive) — images & audio, not just text
+- [Fine-tuning](https://github.com/alexvervloet/fine-tuning-deep-dive) — teach a model new behavior by example
+- [MCP](https://github.com/alexvervloet/mcp-deep-dive) — serve tools, data & prompts to any LLM over a standard protocol
+- [Local Models](https://github.com/alexvervloet/local-models-deep-dive) — run open-weight models on your own machine
+- [Agent Harnesses](https://github.com/alexvervloet/agent-harness-deep-dive) — build on the loop: hooks, permissions, sandboxing, subagents
+- [Realtime Voice](https://github.com/alexvervloet/realtime-voice-deep-dive) — low-latency speech-to-speech agents
+- [Observability](https://github.com/alexvervloet/observability-deep-dive) — watch a running app over time: drift, quality, alerting, the flywheel
 
 **You are here: #1 — OpenAI API.**
