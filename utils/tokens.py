@@ -1,11 +1,10 @@
 """
 Token counting with tiktoken.
-==============================
 
-Models don't see characters or words — they see *tokens*. A token is a chunk of
+Models don't see characters or words. They see *tokens*. A token is a chunk of
 text (often a word fragment). Roughly, 1 token ≈ 4 characters of English, or
 about ¾ of a word, but it varies. The only way to know for sure is to run the
-tokenizer, which is exactly what `tiktoken` does — locally, with no API call.
+tokenizer, which is exactly what `tiktoken` does, locally and with no API call.
 
 Why count tokens?
   1. Cost: you pay per token (see pricing.py).
@@ -46,7 +45,7 @@ def count_tokens(text: str, model: str = "gpt-4o-mini") -> int:
 def count_message_tokens(messages: list[dict], model: str = "gpt-4o-mini") -> int:
     """Count tokens for a chat-completions `messages` list.
 
-    The API doesn't just concatenate your text — it wraps each message in a few
+    The API doesn't just concatenate your text. It wraps each message in a few
     special tokens (to mark the role, the start/end of the message, etc.). This
     function adds that overhead so the number lines up with what you'll actually
     be billed for on the input side.

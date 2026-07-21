@@ -1,6 +1,5 @@
 """
 Cost estimation for OpenAI chat models.
-=======================================
 
 OpenAI bills you per *token*, and charges a different rate for tokens you send
 (input / "prompt" tokens) versus tokens the model generates back (output /
@@ -10,7 +9,7 @@ than input tokens, which is why a chatty model can cost more than you expect.
 Prices are quoted per 1,000,000 tokens. We store them that way below and divide
 when we estimate.
 
-⚠️  PRICES CHANGE. The numbers below are a snapshot and may be out of date by the
+PRICES CHANGE. The numbers below are a snapshot and may be out of date by the
     time you read this. Always confirm against the official pricing page:
         https://platform.openai.com/docs/pricing
     Treat this module as a *teaching tool*, not a billing source of truth.
