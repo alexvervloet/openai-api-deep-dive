@@ -1,6 +1,5 @@
 """
-Example 12 — multi-turn conversations (the API has no memory).
-==============================================================
+Example 12: multi-turn conversations (the API has no memory).
 
 Here's the single most common surprise for newcomers:
 
@@ -23,7 +22,7 @@ Run it (type a few messages, then `quit`):
     secrun python examples/12_conversation.py
 
 Try this to feel the statelessness: tell it your name, then ask "what's my
-name?". It works — because the earlier turns are still in the list. Now look at
+name?". It works, because the earlier turns are still in the list. Now look at
 `trim_history()` below: drop the early turns and the model genuinely forgets,
 because for the model the conversation *is* whatever list you send.
 """
@@ -54,7 +53,7 @@ def trim_history(
     """Keep the system message + the most recent `max_turns` messages.
 
     Every turn you keep is re-sent (and re-billed) on the next request, so real
-    apps cap the history. Drop the oldest turns and the model forgets them —
+    apps cap the history. Drop the oldest turns and the model forgets them 
     proof that "memory" is just the list you choose to send.
     """
     if len(history) <= max_turns + 1:
@@ -79,7 +78,7 @@ while True:
     # 1. Append the user's turn to the running history.
     messages.append({"role": "user", "content": user_input})
 
-    # 2. Send the ENTIRE history every time — that's what gives the model context.
+    # 2. Send the ENTIRE history every time. That's what gives the model context.
     response = client.chat.completions.create(
         model="gpt-4o-mini",
         messages=messages,

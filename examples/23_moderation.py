@@ -1,17 +1,16 @@
 """
-Example 23 — the moderation endpoint: a free safety filter.
-===========================================================
+Example 23: the moderation endpoint: a free safety filter.
 
 Before you send user text to a model (or publish a model's output), you often
 want to know: does this contain hateful, violent, sexual, or self-harm content?
 OpenAI exposes a dedicated **moderation** endpoint for exactly this. It's a
-separate, **free** classifier — not a chat model — that returns category flags and
+separate, **free** classifier, not a chat model, that returns category flags and
 scores for a piece of text.
 
 The response gives you, per input:
-  - `flagged` — a single boolean: did anything trip the policy?
-  - `categories` — a bool per category (hate, violence, sexual, self-harm, ...).
-  - `category_scores` — a 0–1 confidence per category, so you can set your own
+  - `flagged`: a single boolean. Did anything trip the policy?
+  - `categories`: a bool per category (hate, violence, sexual, self-harm, ...).
+  - `category_scores`: a 0-1 confidence per category, so you can set your own
     threshold instead of trusting the default flag.
 
 A common pattern: moderate the *user's input* on the way in and the *model's

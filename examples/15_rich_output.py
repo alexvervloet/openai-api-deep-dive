@@ -1,9 +1,8 @@
 """
-Example 15 — formatting output: Markdown, tables, and code blocks.
-==================================================================
+Example 15: formatting output: Markdown, tables, and code blocks.
 
-So far we've `print()`ed raw strings. But models love to answer in **Markdown** —
-headings, **bold**, bullet lists, and fenced ```code``` blocks — and dumping that
+So far we've `print()`ed raw strings. But models love to answer in **Markdown** 
+headings, **bold**, bullet lists, and fenced ```code``` blocks, and dumping that
 raw to a terminal shows the literal `**asterisks**` and backticks. Ugly.
 
 The `rich` library renders all of that beautifully in the terminal:
@@ -13,7 +12,7 @@ The `rich` library renders all of that beautifully in the terminal:
 
 This pairs naturally with what you've learned: ask the model for Markdown and
 render it (live, even, while streaming), or take *structured* data (example 14)
-and lay it out as a table. Nothing here is OpenAI-specific — it's how you make
+and lay it out as a table. Nothing here is OpenAI-specific; it's how you make
 any model's output pleasant to read.
 
 This example needs `rich` (in requirements.txt):

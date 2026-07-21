@@ -1,16 +1,15 @@
 """
-Example 21 — prompt caching: stop paying full price for a repeated prefix.
-==========================================================================
+Example 21: prompt caching: stop paying full price for a repeated prefix.
 
 Many real apps send the *same* long prefix on every request: a big system prompt,
 a tool catalog, a document you're asking many questions about. Re-processing those
-identical input tokens every time is wasteful — so OpenAI **caches** them.
+identical input tokens every time is wasteful, so OpenAI **caches** them.
 
 The good news: on OpenAI it's **automatic**. Any request whose prompt is ≥1024
 tokens has its longest matching *prefix* cached; identical prefixes on later
 requests are read from cache at a **discount** (cached input tokens are billed at
 a fraction of the normal input price) and processed faster. You don't call a
-special endpoint — you just structure prompts so the *stable* part comes first and
+special endpoint. You just structure prompts so the *stable* part comes first and
 the *variable* part (the user's actual question) comes last.
 
 This script sends two requests that share a long, identical system prefix, then
@@ -76,6 +75,6 @@ ans2, total2, cached2 = ask("What's your refund window?")
 print(f"Call 2: {total2} prompt tokens, {cached2} cached  <-- the cache paid off")
 
 print("\nThe second call billed most of the prefix at the cheaper cached rate, and")
-print("processed faster — for free, just by keeping the constant part at the front.")
+print("processed faster, for free, just by keeping the constant part at the front.")
 print("(Caches are best-effort and expire after minutes of inactivity; don't rely on")
 print(" a specific hit, just structure prompts to make hits likely.)")

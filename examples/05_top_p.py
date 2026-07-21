@@ -1,12 +1,11 @@
 """
-Example 05 — top_p (nucleus sampling).
-======================================
+Example 05: top_p (nucleus sampling).
 
 `top_p` is the other randomness knob. Instead of scaling probabilities like
 temperature does, it *restricts the candidate pool*:
 
   top_p = 0.1  -> consider only the smallest set of tokens whose probabilities
-                  add up to 10%. Very focused — picks from the obvious choices.
+                  add up to 10%. Very focused: picks from the obvious choices.
   top_p = 1.0  -> consider everything (no restriction). This is the default.
 
 Mental model: temperature changes *how boldly* the model chooses among options;

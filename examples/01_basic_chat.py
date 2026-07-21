@@ -1,6 +1,5 @@
 """
-Example 01 — Your first chat completion.
-=========================================
+Example 01: Your first chat completion.
 
 The whole API in five lines. You send a list of messages; you get back a
 message. Run it:

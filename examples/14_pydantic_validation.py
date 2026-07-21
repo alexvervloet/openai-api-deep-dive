@@ -1,6 +1,5 @@
 """
-Example 14 — Pydantic validation of responses.
-===============================================
+Example 14: Pydantic validation of responses.
 
 Example 09 made the model return JSON matching a hand-written JSON Schema, then
 parsed it with `json.loads()` into a plain dict. That works, but you're left
@@ -13,7 +12,7 @@ rest. `client.chat.completions.parse(...)` (the structured-outputs helper):
   - converts your model into a strict JSON Schema and sends it for you,
   - constrains the model to match it,
   - and hands back an *already-validated instance of your model* on
-    `message.parsed` — typed attributes, not a dict.
+    `message.parsed`: typed attributes, not a dict.
 
 Why this beats a raw dict:
   - **Types**: `review.bugs[0].severity` autocompletes and is checked.
@@ -85,7 +84,7 @@ response = client.chat.completions.parse(
 message = response.choices[0].message
 
 # 3. The model may decline (safety). When it does, `.parsed` is None and the
-#    reason is on `.refusal` — always check before using the parsed object.
+#    reason is on `.refusal`: always check before using the parsed object.
 if message.refusal:
     print(f"Model refused: {message.refusal}")
     sys.exit()
@@ -93,7 +92,7 @@ if message.refusal:
 review = message.parsed  # <- a validated CodeReview instance, not a dict
 assert review is not None
 
-# 4. Use it like the typed object it is — attributes, not string keys.
+# 4. Use it like the typed object it is: attributes, not string keys.
 print(f"Language:   {review.language}")
 print(f"Summary:    {review.summary}")
 print(f"Confidence: {review.confidence:.0%}")

@@ -1,24 +1,23 @@
 """
-Example 09 — JSON & structured outputs.
-=======================================
+Example 09: JSON & structured outputs.
 
-Often you don't want prose — you want *data* your program can use directly. The
+Often you don't want prose. You want *data* your program can use directly. The
 API can guarantee the reply is valid JSON, and even force it to match an exact
 schema you define. No more fragile "please reply in JSON" prompting and hoping.
 
 There are two levels:
 
-  1. JSON mode — `response_format={"type": "json_object"}`.
+  1. JSON mode: `response_format={"type": "json_object"}`.
      Guarantees the output is *syntactically valid JSON*. You still describe the
      shape you want in the prompt. Good enough for simple cases.
 
-  2. Structured Outputs — `response_format={"type": "json_schema", ...}` with
+  2. Structured Outputs: `response_format={"type": "json_schema", ...}` with
      `"strict": True`.
-     Guarantees the output *conforms to a JSON Schema you provide* — the right
+     Guarantees the output *conforms to a JSON Schema you provide*, the right
      keys, the right types, every time. This is the robust choice. We use it
      below.
 
-Either way, the content still comes back as a *string* — you parse it with
+Either way, the content still comes back as a *string*, so you parse it with
 `json.loads()` yourself.
 
 Run it:
@@ -87,7 +86,7 @@ response = client.chat.completions.create(
     },
 )
 
-# Guaranteed valid JSON matching our schema — safe to parse and use as a dict.
+# Guaranteed valid JSON matching our schema: safe to parse and use as a dict.
 # `.content` is typed `str | None` (it's None when the model returns only tool
 # calls), so we fall back to "{}" to keep both the runtime and the type checker
 # happy.

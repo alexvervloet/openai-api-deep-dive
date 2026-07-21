@@ -1,6 +1,5 @@
 """
-Example 06 — stop sequences.
-============================
+Example 06: stop sequences.
 
 `stop` is a string (or list of up to 4 strings) that tells the model: "the
 moment you're about to produce this text, stop generating." The stop text itself

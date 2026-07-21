@@ -1,9 +1,8 @@
 """
-Example 16 — Server-Sent Events (SSE): the protocol under streaming.
-=====================================================================
+Example 16: Server-Sent Events (SSE): the protocol under streaming.
 
-Every streaming AI response — in the ChatGPT UI, in examples/08_streaming.py,
-in every production assistant — travels over a protocol called Server-Sent
+Every streaming AI response, in the ChatGPT UI, in examples/08_streaming.py,
+and in every production assistant, travels over a protocol called Server-Sent
 Events (SSE). The OpenAI SDK parses it for you, but knowing the raw format
 pays off: it's exactly what you'll produce when you build a backend that
 forwards AI tokens to a browser.
@@ -28,23 +27,23 @@ Rules:
   - Lines starting with `data:` hold the payload.
   - A blank line terminates the current event.
   - `data: [DONE]` signals the end (OpenAI-specific; the SDK silently swallows it).
-  - Other SSE fields — `event:`, `id:`, `retry:` — are valid per spec but
+  - Other SSE fields (`event:`, `id:`, `retry:`) are valid per spec but
     OpenAI only uses `data:`.
 
 This example has three parts:
 
-  Part 1 — Raw events: print each chunk exactly as it arrives on the wire.
+  Part 1, raw events: print each chunk exactly as it arrives on the wire.
            The SDK gives us the parsed object; we format it back to text so
            you can see what the HTTP layer actually looks like.
 
-  Part 2 — Token timing: measure time-to-first-token and generation throughput
+  Part 2, token timing: measure time-to-first-token and generation throughput
            to understand the rhythm of incremental delivery.
 
-  Part 3 — Partial accumulation: show how a server buffers tokens in memory
+  Part 3, partial accumulation: show how a server buffers tokens in memory
            to track progress and recover from interruptions.
 
 The capstone that puts all of this into practice is hands_on/streaming_server.py
-— a FastAPI server that streams tokens over SSE to a real browser.
+a FastAPI server that streams tokens over SSE to a real browser.
 
 Run it:
 
@@ -95,7 +94,7 @@ for chunk in stream:
     # In reality, the TCP stream contained exactly: "data: <json>\n\n"
     payload = json.dumps(chunk.model_dump(exclude_none=True))
     line = f"data: {payload}"
-    print(line[:120] + ("…" if len(line) > 120 else ""))
+    print(line[:120] + ("..." if len(line) > 120 else ""))
 
     if chunk.choices:
         piece = chunk.choices[0].delta.content
@@ -149,6 +148,6 @@ to the browser:
     yield f"data: {json.dumps({'type': 'token', 'text': piece})}\\n\\n"
 
 The browser's fetch + ReadableStream parses those lines and calls your handler
-for each event — exactly the same loop, but running client-side. See
+for each event, exactly the same loop but running client-side. See
 hands_on/streaming_server.py for the full production-ready implementation.
 """)

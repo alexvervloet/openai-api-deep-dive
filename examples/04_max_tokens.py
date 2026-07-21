@@ -1,9 +1,8 @@
 """
-Example 04 — max_tokens (and finish_reason).
-============================================
+Example 04: max_tokens (and finish_reason).
 
 `max_tokens` caps how many tokens the model is allowed to GENERATE. It does NOT
-limit your input, and it does NOT make the model "summarize to fit" — it simply
+limit your input, and it does NOT make the model "summarize to fit". It simply
 cuts the model off when the budget runs out, mid-sentence if necessary.
 
 Why use it?
@@ -13,7 +12,7 @@ Why use it?
 
 The companion to watch is `finish_reason`:
   - "stop"   : the model finished on its own.
-  - "length" : it hit your max_tokens cap — the answer is truncated.
+  - "length" : it hit your max_tokens cap, so the answer is truncated.
 
 Run it:
 

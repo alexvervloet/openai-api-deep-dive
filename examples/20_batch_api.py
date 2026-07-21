@@ -1,9 +1,8 @@
 """
-Example 20 — the Batch API: half price, for work that isn't urgent.
-===================================================================
+Example 20: the Batch API: half price, for work that isn't urgent.
 
 Every example so far made *synchronous* calls: you ask, you wait, you get an
-answer. But a lot of real LLM work isn't interactive — classify 10,000 reviews,
+answer. But a lot of real LLM work isn't interactive: classify 10,000 reviews,
 summarize a backlog of tickets, generate embeddings for a corpus. For that, the
 **Batch API** is the right tool: you upload a file of requests, OpenAI processes
 them within 24 hours, and you pay **50% less** per token. No rate-limit juggling,
@@ -11,15 +10,15 @@ no `for` loop hammering the endpoint.
 
 The lifecycle (it mirrors a job queue):
 
-  1. Build a JSONL file — one request per line, each with a `custom_id`.
+  1. Build a JSONL file, one request per line, each with a `custom_id`.
   2. Upload it          (files.create, purpose="batch").
-  3. Create the batch   (batches.create) — this starts processing.
-  4. Poll until done    (batches.retrieve) — status goes validating -> in_progress
+  3. Create the batch   (batches.create), which starts processing.
+  4. Poll until done    (batches.retrieve); status goes validating -> in_progress
                         -> completed.
-  5. Download results   (files.content) — a JSONL keyed by your custom_ids.
+  5. Download results   (files.content), a JSONL keyed by your custom_ids.
 
 This script builds a tiny 3-request batch and submits it. Because a batch can take
-minutes to (up to) 24 hours, it does NOT block waiting — it prints the batch id and
+minutes to (up to) 24 hours, it does NOT block waiting. It prints the batch id and
 shows you how to check on it and fetch results. Re-run with the id to poll.
 
 Run it:
@@ -91,7 +90,7 @@ def check_batch(batch_id: str) -> None:
           f"({counts.completed}/{counts.total} done, {counts.failed} failed)")
 
     if batch.status != "completed":
-        print("Not finished yet — batches run within 24h. Re-run this to check again.")
+        print("Not finished yet; batches run within 24h. Re-run this to check again.")
         return
 
     # --- Step 5: download and print results, matched by custom_id. ---

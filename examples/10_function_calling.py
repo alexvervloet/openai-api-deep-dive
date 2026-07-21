@@ -1,9 +1,8 @@
 """
-Example 10 — function / tool calling.
-=====================================
+Example 10: function / tool calling.
 
 The model can't run code, browse, or query your database. But it *can* tell you
-"I'd like you to call this function with these arguments" — and then you run the
+"I'd like you to call this function with these arguments", and then you run the
 function and hand the result back. This is "tool calling," and it's how chatbots
 get the ability to actually *do* things.
 
@@ -17,7 +16,7 @@ The dance has four steps:
   4. You send the result back (as a `tool` role message) and the model writes the
      final natural-language answer using it.
 
-The model never runs your code — it only *asks*. You stay in control of what
+The model never runs your code. It only *asks*. You stay in control of what
 actually executes.
 
 Run it:
@@ -80,15 +79,15 @@ first = client.chat.completions.create(
 reply = first.choices[0].message
 
 # --- Step 2 & 3: the model asked for tool calls; we run them. ---
-# Append the model's tool-call message to the history first — the API requires
+# Append the model's tool-call message to the history first: the API requires
 # every tool result to follow the assistant message that requested it.
 # `reply` is a *response* object (ChatCompletionMessage), not a request param
-# dict — the API accepts it back as-is at runtime, but the two types differ, so
+# dict: the API accepts it back as-is at runtime, but the two types differ, so
 # we silence that one inherent request/response mismatch.
 messages.append(reply)  # type: ignore[arg-type]
 
 for call in reply.tool_calls or []:
-    # `tool_calls` is a union — a call can be a "function" call or a "custom"
+    # `tool_calls` is a union: a call can be a "function" call or a "custom"
     # one. We only registered a function tool, so narrow to that variant; this
     # also tells the type checker `.function` is safe to access.
     if call.type != "function":

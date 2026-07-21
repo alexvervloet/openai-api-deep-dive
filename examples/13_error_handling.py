@@ -1,6 +1,5 @@
 """
-Example 13 — errors, timeouts, and retries (surviving the real world).
-======================================================================
+Example 13: errors, timeouts, and retries (surviving the real world).
 
 Every example so far assumed the happy path: the request succeeds. In
 production it often won't. The network blips, you hit a rate limit, a model
@@ -17,11 +16,11 @@ What you DO need is two things:
 
   1. Configure the client's `timeout` and `max_retries` for your use case.
   2. Catch the SDK's typed exceptions so you can react differently to a
-     "fix your request" error (bad key, bad model — don't retry) versus a
-     "try again later" error (rate limit, overload — the SDK already did).
+     "fix your request" error (bad key, bad model, don't retry) versus a
+     "try again later" error (rate limit, overload, which the SDK already did).
 
 The exceptions form a hierarchy. Catch the SPECIFIC ones you handle specially,
-then a broad `APIError` as a backstop — most specific first, or the broad one
+then a broad `APIError` as a backstop: most specific first, or the broad one
 shadows the rest.
 
 Run it:
@@ -63,16 +62,16 @@ def ask(model: str, question: str) -> str | None:
         return response.choices[0].message.content
 
     except openai.AuthenticationError:
-        # 401 — bad/missing key. Not retryable; fix the credentials.
+        # 401: bad/missing key. Not retryable; fix the credentials.
         print("Auth failed: check OPENAI_API_KEY.")
     except openai.NotFoundError:
-        # 404 — usually a typo'd or unavailable model. Not retryable.
+        # 404: usually a typo'd or unavailable model. Not retryable.
         print(f"Model not found: {model!r}. Check the model name.")
     except openai.BadRequestError as e:
-        # 400 — malformed request (bad params, too many tokens). Not retryable.
+        # 400: malformed request (bad params, too many tokens). Not retryable.
         print(f"Bad request: {e}")
     except openai.RateLimitError:
-        # 429 — the SDK already retried with backoff and still failed.
+        # 429: the SDK already retried with backoff and still failed.
         # Back off further, queue the work, or slow your request rate.
         print("Rate limited even after retries. Slow down or try later.")
     except openai.APITimeoutError:
@@ -92,7 +91,7 @@ def ask(model: str, question: str) -> str | None:
     return None
 
 
-# 1. A request that fails predictably — caught and reported, no crash.
+# 1. A request that fails predictably: caught and reported, no crash.
 print("--- requesting a model that doesn't exist ---")
 ask("gpt-4o-mini-does-not-exist", "Hello?")
 

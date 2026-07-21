@@ -1,12 +1,11 @@
 """
-Example 03 — temperature.
-=========================
+Example 03: temperature.
 
 `temperature` controls randomness, roughly 0.0 to 2.0.
 
   - 0.0  : The model almost always picks its single most likely next token.
            Answers are focused, repeatable, and a bit "safe". Best for facts,
-           code, extraction — anything where you want consistency.
+           code, extraction, anything where you want consistency.
   - 0.7  : A balanced default. Some variety, still coherent.
   - 1.5+ : Wild. More surprising word choices, more risk of nonsense. Good for
            brainstorming or creative writing.

@@ -1,4 +1,4 @@
-"""A small snippet to point `ask.py` at. It has a subtle bug or two on purpose —
+"""A small snippet to point `ask.py` at. It has a subtle bug or two on purpose 
 ask the model to find them!"""
 
 

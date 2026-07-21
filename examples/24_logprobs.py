@@ -1,10 +1,9 @@
 """
-Example 24 — logprobs: how *confident* was the model?
-=====================================================
+Example 24: logprobs: how *confident* was the model?
 
 A normal response gives you the model's chosen words but says nothing about how
 sure it was. Set `logprobs=True` and the API also returns, for each token it
-generated, the **log-probability** it assigned — and with `top_logprobs=k`, the
+generated, the **log-probability** it assigned, and with `top_logprobs=k`, the
 k most likely alternatives it considered at that position.
 
 Why you'd want this:
@@ -12,18 +11,18 @@ Why you'd want this:
     0–1 confidence per token. Useful to flag shaky answers for review.
   - **Classification with calibration.** For a one-token answer ("yes"/"no",
     "positive"/"negative"), the alternatives' probabilities tell you *how close*
-    the call was — far more informative than the bare label.
+    the call was, far more informative than the bare label.
   - **Debugging.** See where the model was torn between two continuations.
 
-CAVEAT — confidence is not the same as correctness. A logprob measures how
+CAVEAT: confidence is not the same as correctness. A logprob measures how
 peaked the model's next-token distribution was, given its training data. It
 says nothing about whether the model actually *knows* the answer. Ask it
 something unknowable (future weather, an unpublished number) and forced into
 a one-word reply, it will often still commit to a single token with near-100%
-"confidence" — it's just reproducing the most statistically common phrasing
+"confidence". It's just reproducing the most statistically common phrasing
 for that kind of question, not reporting epistemic uncertainty. Low-confidence,
 split logprobs show up when the model is genuinely torn between plausible
-continuations (ambiguous classification, or tasks it tends to get wrong) —
+continuations (ambiguous classification, or tasks it tends to get wrong) 
 not when it lacks information it never had a way to access.
 
 This script asks a yes/no question, then prints the probability of the answer
@@ -74,9 +73,9 @@ def confidence(question: str):
 QUESTIONS = [
     "Is the Earth larger than the Moon?",  # the model should be very sure
     "Will it rain in Paris next Tuesday?",  # unknowable, but watch the model still
-    # answer near-100% confident — see the
+    # answer near-100% confident. See the
     # CAVEAT above
-    "Is a hot dog a sandwich?",  # genuinely contested classification —
+    "Is a hot dog a sandwich?",  # genuinely contested classification 
     # training data argues both ways, so the
     # logprobs are more likely to split
 ]
@@ -90,9 +89,9 @@ for q in QUESTIONS:
 
 print("A confident answer puts almost all probability on one token; a genuinely")
 print("torn one spreads it across alternatives. That spread is a signal you can act")
-print("on — auto-accept the confident ones, route the shaky ones to a human.")
+print("on: auto-accept the confident ones, route the shaky ones to a human.")
 print()
 print("But notice the Paris weather question: the model can't know the answer, yet")
 print("it was still ~100% confident. High confidence reflects a peaked training")
-print("distribution, not factual certainty — don't treat logprobs as a truth signal")
+print("distribution, not factual certainty. Don't treat logprobs as a truth signal")
 print("for questions the model has no way to answer.")

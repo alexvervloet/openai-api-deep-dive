@@ -1,9 +1,8 @@
 """
-Example 18 — vision: sending an image alongside text.
-=====================================================
+Example 18: vision: sending an image alongside text.
 
 Everything so far sent only text. Multimodal models also accept *images* in the
-same message — so you can ask "what's in this picture?", read a screenshot, or
+same message, so you can ask "what's in this picture?", read a screenshot, or
 pull data out of a photo of a receipt. The request shape barely changes: instead
 of a plain string, the user message's `content` becomes a *list of parts*, where
 each part is either `{"type": "text", ...}` or `{"type": "image_url", ...}`.
@@ -11,10 +10,10 @@ each part is either `{"type": "text", ...}` or `{"type": "image_url", ...}`.
 Two ways to provide the image, both shown here:
   - a public URL the model can fetch, or
   - a local file you read and inline as a base64 `data:` URI (no public hosting
-    needed — this is what real apps usually do).
+    needed, which is what real apps usually do).
 
 Images are billed as tokens too, and the count scales with the image's pixel
-dimensions — a big screenshot can cost more than a page of text. Downscale before
+dimensions: a big screenshot can cost more than a page of text. Downscale before
 sending if you care about cost.
 
 Run it (uses a public sample image):
@@ -87,6 +86,6 @@ response = client.chat.completions.create(
 
 print(response.choices[0].message.content)
 assert response.usage is not None
-print(f"\n[tokens — prompt: {response.usage.prompt_tokens}, "
+print(f"\n[tokens: prompt: {response.usage.prompt_tokens}, "
       f"completion: {response.usage.completion_tokens}]")
 print("Notice the prompt tokens: the image itself is most of them. Bigger image = more tokens.")

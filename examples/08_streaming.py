@@ -1,10 +1,9 @@
 """
-Example 08 — streaming responses.
-=================================
+Example 08: streaming responses.
 
 By default, `chat.completions.create` waits until the *entire* answer is ready,
 then hands it to you in one piece. With `stream=True`, the API instead sends the
-answer back in small pieces ("chunks") as the model generates them — exactly like
+answer back in small pieces ("chunks") as the model generates them, exactly like
 you see text appear word-by-word in ChatGPT.
 
 Why stream?
@@ -14,7 +13,7 @@ Why stream?
 
 How it works:
   - The call returns an *iterator* instead of a single response object.
-  - Each chunk carries a `delta` — the new bit of content since the last chunk.
+  - Each chunk carries a `delta`: the new bit of content since the last chunk.
   - `delta.content` is often an empty string (e.g. the very first chunk just
     opens the message), so we guard for None/empty.
   - To get token `usage` while streaming, you must opt in with

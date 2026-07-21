@@ -1,6 +1,5 @@
 """
-Example 02 — system / user / assistant roles.
-==============================================
+Example 02: system / user / assistant roles.
 
 A chat is a transcript of messages, each tagged with a role:
 
@@ -9,7 +8,7 @@ A chat is a transcript of messages, each tagged with a role:
                 "see" it; it steers everything that follows.
   - user      : What the human says.
   - assistant : What the model said. You include PRIOR assistant messages to give
-                the model memory of the conversation — the API itself is
+                the model memory of the conversation. The API itself is
                 stateless, so *you* resend the history every time.
 
 Run it:
@@ -36,7 +35,7 @@ client = OpenAI()
 
 # Note the assistant message in the middle: we're *simulating* a prior turn so
 # the model continues the thread coherently. This is how you build multi-turn
-# chat — keep appending messages to the list.
+# chat: keep appending messages to the list.
 messages: list[ChatCompletionMessageParam] = [
     {"role": "system", "content": "You are a terse math tutor. One line only."},
     {"role": "user", "content": "What is 12 * 12?"},
