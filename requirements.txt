@@ -13,7 +13,7 @@ python-dotenv>=1.0.0
 # validated instance. (Pydantic v2.)
 pydantic>=2.0.0
 
-# rich renders Markdown, syntax-highlighted code, and tables in the terminal —
+# rich renders Markdown, syntax-highlighted code, and tables in the terminal 
 # used by example 15 and extract.py to format model output nicely.
 rich>=13.0.0
 

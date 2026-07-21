@@ -1,6 +1,5 @@
 """
-Setup check — run this first.
-=============================
+Setup check: run this first.
 
 Before you run any example, run:
 
@@ -8,11 +7,11 @@ Before you run any example, run:
 
 It answers one question: "Is my environment ready?" It checks your Python
 version, that the dependencies are installed, and that your API key is in place
-— and tells you exactly what to fix if something's off. It makes NO API calls,
+and tells you exactly what to fix if something's off. It makes NO API calls,
 so it costs nothing and works even before you've added a key.
 
 This script deliberately uses only Python's standard library, so it runs even
-when nothing has been `pip install`ed yet — that way it can tell you that the
+when nothing has been `pip install`ed yet, so it can tell you that the
 dependencies are missing instead of crashing.
 """
 
@@ -20,7 +19,7 @@ import importlib.util
 import os
 import sys
 
-# ANSI colors — fall back to plain text if the terminal doesn't support them.
+# ANSI colors: fall back to plain text if the terminal doesn't support them.
 _USE_COLOR = sys.stdout.isatty() and os.getenv("NO_COLOR") is None
 
 
@@ -44,7 +43,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 
 # Each entry: (import name, pip name, what it's for, required?)
 DEPENDENCIES = [
-    ("openai", "openai", "the OpenAI SDK — every example needs it", True),
+    ("openai", "openai", "the OpenAI SDK, needed by every example", True),
     ("tiktoken", "tiktoken", "offline token counting (examples 07, ask.py)", True),
     ("dotenv", "python-dotenv", "reads .env config (key comes from secrun)", True),
     ("pydantic", "pydantic", "validated outputs (examples 14, extract.py)", True),
@@ -60,7 +59,7 @@ def check_python():
     if (major, minor) >= (3, 10):
         ok(f"Python {major}.{minor} (3.10+ required)")
         return True
-    fail(f"Python {major}.{minor} — this repo needs Python 3.10 or newer.")
+    fail(f"Python {major}.{minor}: this repo needs Python 3.10 or newer.")
     print("    Install a newer Python from https://www.python.org/downloads/")
     return False
 
@@ -70,9 +69,9 @@ def check_dependencies():
     missing_required = []
     for import_name, pip_name, purpose, required in DEPENDENCIES:
         if importlib.util.find_spec(import_name) is not None:
-            ok(f"{pip_name} — {purpose}")
+            ok(f"{pip_name}: {purpose}")
         elif required:
-            fail(f"{pip_name} MISSING — {purpose}")
+            fail(f"{pip_name} MISSING: {purpose}")
             missing_required.append(pip_name)
 
     if missing_required:
@@ -103,14 +102,14 @@ def check_api_key():
     if env is None:
         fail(".env file not found.")
         print("    Create it with:  cp .env.example .env")
-        print("    (Config only — your key loads separately via secrun; see SECRETS.md.)")
+        print("    (Config only; your key loads separately via secrun. See SECRETS.md.)")
         return False
 
     # Prefer a real environment variable, fall back to the .env value.
     key = os.getenv("OPENAI_API_KEY") or env.get("OPENAI_API_KEY", "")
     if not key or key == "sk-your-key-here":
         fail("OPENAI_API_KEY is not set.")
-        print("    Store it in your keychain and run `secrun python check_setup.py` — see SECRETS.md.")
+        print("    Store it in your keychain and run `secrun python check_setup.py`. See SECRETS.md.")
         return False
     if not key.startswith("sk-"):
         warn("OPENAI_API_KEY is set but doesn't look like an OpenAI key "
@@ -129,7 +128,7 @@ def main():
         print(_c("All set! 🎉", "1;32"))
         print("Start here:  secrun python examples/01_basic_chat.py")
         return 0
-    print(_c("Not ready yet — fix the ✗ items above, then run this again.", "1;31"))
+    print(_c("Not ready yet. Fix the ✗ items above, then run this again.", "1;31"))
     print("(The ! items are optional and safe to ignore for now.)")
     return 1
 
