@@ -1,4 +1,4 @@
-# Exercises — make the learning stick
+# Exercises: make the learning stick
 
 Reading code teaches you less than *predicting* what it will do and then checking.
 This file turns each section of the [README](README.md) into a few quick
@@ -6,7 +6,7 @@ active-recall prompts: a thing to predict, a thing to change, and a question to
 answer from memory. None take more than a couple of minutes.
 
 How to use it: work the section in the README first, then come back here. For each
-exercise, **commit to an answer before you run or reveal** — the prediction is
+exercise, **commit to an answer before you run or reveal.** The prediction is
 where the learning happens, even (especially) when you're wrong. Answers are
 hidden behind ▸ toggles.
 
@@ -15,10 +15,10 @@ hidden behind ▸ toggles.
 
 ---
 
-## Section 2 — Your first request
+## Section 2: Your first request
 
 **Predict.** Before running `examples/01_basic_chat.py`, what *type* is
-`response.choices` — a string, a dict, or a list? Why does the code say
+`response.choices`: a string, a dict, or a list? Why does the code say
 `choices[0]`?
 
 <details><summary>▸ Answer</summary>
@@ -34,7 +34,7 @@ default `n=1` there's exactly one.
 
 ---
 
-## Section 3 — Roles
+## Section 3: Roles
 
 **Do.** Open `examples/02_roles.py` and set the system message to
 `"You answer only in haiku."` Rerun. Then move that same instruction into the
@@ -46,14 +46,14 @@ your name from three messages ago?
 
 <details><summary>▸ Answer</summary>
 
-It doesn't — *you* do. Every turn you resend the entire `messages` list,
+It doesn't. *You* do. Every turn you resend the entire `messages` list,
 including the earlier user and assistant turns. The "memory" is just that growing
 list being sent each time. (You'll build exactly this in `examples/12_conversation.py`.)
 </details>
 
 ---
 
-## Section 4 — The knobs
+## Section 4: The knobs
 
 **Predict, then run.** You run `examples/03_temperature.py` twice at
 `temperature=0`. How similar will the two answers be? Now twice at
@@ -61,7 +61,7 @@ list being sent each time. (You'll build exactly this in `examples/12_conversati
 
 <details><summary>▸ Answer</summary>
 
-At `0` they'll be nearly identical every time (focused, near-deterministic — though
+At `0` they'll be nearly identical every time (focused, near-deterministic, though
 never a 100% guarantee). At `1.5` they'll diverge, sometimes wildly. This is the
 whole point of the knob: low for facts/code, high for variety.
 </details>
@@ -72,7 +72,7 @@ what does it tell you?
 
 <details><summary>▸ Answer</summary>
 
-`"length"` — the model was cut off by your cap, not because it was done. A natural
+`"length"`: the model was cut off by your cap, not because it was done. A natural
 finish shows `"stop"`. Watching `finish_reason` is how you detect truncated
 answers in real code.
 </details>
@@ -89,7 +89,7 @@ leave the other at its default.
 
 ---
 
-## Section 5 — Tokens **(offline)**
+## Section 5: Tokens **(offline)**
 
 **Predict, then run.** Run `python utils/tokens.py`. Before you do: will
 `"unbelievable"` be 1 token or several? Will `"    "` (four spaces) cost anything?
@@ -98,7 +98,7 @@ Edit the `sample` string to test both.
 <details><summary>▸ Answer</summary>
 
 `"unbelievable"` splits into multiple sub-word tokens; common short words are
-often one. Whitespace is *not* free — runs of spaces and newlines are tokens too.
+often one. Whitespace is *not* free: runs of spaces and newlines are tokens too.
 Seeing the `Pieces:` list is the fastest way to build intuition for how the model
 "sees" text.
 </details>
@@ -109,7 +109,7 @@ and why might code cost more than prose?
 
 ---
 
-## Section 6 — Cost **(offline)**
+## Section 6: Cost **(offline)**
 
 **Predict.** A request is 2,000 input tokens and 500 output tokens. Using the
 prices in `utils/pricing.py`, will it cost more on `gpt-4o-mini` or `gpt-4o`?
@@ -118,7 +118,7 @@ Roughly how many times more?
 <details><summary>▸ Answer</summary>
 
 Far more on `gpt-4o`. Do the arithmetic with `estimate_cost()` to see the exact
-multiple — then notice that **output** tokens dominate, since output is priced
+multiple: then notice that **output** tokens dominate, since output is priced
 several times higher than input. Choosing the cheaper model for a task is real
 money saved.
 </details>
@@ -129,7 +129,7 @@ to keep the table current when prices change.
 
 ---
 
-## Section 7 — Capstone: `ask.py`
+## Section 7: Capstone: `ask.py`
 
 **Do.** Run `ask.py` on `snippets/buggy.py` with `--dry-run`, note the estimated
 cost, then run it for real and compare the estimate to the *actual* cost printed
@@ -147,7 +147,7 @@ or longer than the assumed ~500 tokens, moving the actual cost accordingly.
 
 ---
 
-## Section 8 — Beyond the basics
+## Section 8: Beyond the basics
 
 **Recall.** In function/tool calling (`examples/10_function_calling.py`), the
 model decides to call your function. Does the OpenAI API run your function for
@@ -157,7 +157,7 @@ you?
 
 No. The model only emits the function *name and arguments*. **You** run the
 function and feed the result back in a follow-up message. The model never executes
-your code — it just asks for it to be run.
+your code. It only asks for it to be run.
 </details>
 
 **Predict, then run.** In `examples/11_embeddings.py`, the demo ranks sentences by
@@ -166,7 +166,7 @@ rank highly?
 
 <details><summary>▸ Answer</summary>
 
-Yes — that's the entire value of embeddings. They capture *meaning*, not word
+Yes, and that's the entire value of embeddings. They capture *meaning*, not word
 overlap, so "the feline napped" can rank near "a cat is sleeping." This is why
 embeddings power semantic search and RAG.
 </details>
@@ -179,7 +179,7 @@ you?
 
 Time-to-*first-token*. The user starts reading immediately instead of staring at a
 blank screen until the whole answer is ready. Same total time, far better
-perceived responsiveness — which is why chat UIs stream.
+perceived responsiveness, which is why chat UIs stream.
 </details>
 
 **Recall (vision, `18_vision.py`).** A text request sends a string for `content`.
@@ -187,7 +187,7 @@ What does an image request send instead, and how does the image itself travel?
 
 <details><summary>▸ Answer</summary>
 
-A **list of parts** — a `text` part and an `image_url` part — in one user message.
+A **list of parts**, a `text` part and an `image_url` part, in one user message.
 The image is either a URL the model fetches, or a local file inlined as a base64
 `data:` URI. The image is billed as tokens, scaled by its pixel size.
 </details>
@@ -199,7 +199,7 @@ The image is either a URL the model fetches, or a local file inlined as a base64
 
 Reasoning models ignore sampling knobs like `temperature`; you steer how hard they
 think with `reasoning_effort`. The `reasoning_tokens` are the model's **hidden**
-chain of thought — generated before the visible answer, never shown to you, but
+chain of thought, generated before the visible answer and never shown to you, but
 still billed.
 </details>
 
@@ -208,7 +208,7 @@ discount, and what ties each answer back to its input?
 
 <details><summary>▸ Answer</summary>
 
-You trade **immediacy** — results land within 24h instead of instantly. Each line's
+You trade **immediacy**: results land within 24h instead of instantly. Each line's
 `custom_id` is echoed in the results file, so you can match every answer back to the
 request that produced it.
 </details>
@@ -239,7 +239,7 @@ model? When do you call it?
 
 <details><summary>▸ Answer</summary>
 
-No — it's a separate, **free** classifier returning category flags + scores. Call it
+No. It's a separate, **free** classifier returning category flags + scores. Call it
 on **user input on the way in** and **model output on the way out**, refusing or
 redacting when `flagged` is true.
 </details>
@@ -251,21 +251,21 @@ genuinely uncertain one, how do the `top_logprobs` differ?
 
 A confident answer puts **almost all probability on one token**; an uncertain one
 **spreads** probability across alternatives. That spread is a usable confidence
-signal — auto-accept the confident ones, route the shaky ones to review.
+signal: auto-accept the confident ones, route the shaky ones to review.
 </details>
 
 **Recall (seed, `25_seed_determinism.py`).** The example fixes `seed=42` at
-`temperature=0.9` rather than `temperature=0` — why, and why is the result still only
+`temperature=0.9` rather than `temperature=0`. Why, and why is the result still only
 "best-effort," not a guarantee?
 
 <details><summary>▸ Answer</summary>
 
 At `temperature=0` the model is already deterministic (always the most likely token),
-so a fixed seed wouldn't visibly be doing anything — you couldn't tell its effect
+so a fixed seed wouldn't visibly be doing anything, and you couldn't tell its effect
 apart from temperature=0's own determinism. Running at `temperature=0.9` keeps real
 randomness in play, so a matching seed across two calls visibly pins the output down,
 while an unset seed visibly doesn't. Either way, OpenAI can change the backend, and
-determinism isn't guaranteed across such changes — the `system_fingerprint` field is
+determinism isn't guaranteed across such changes; the `system_fingerprint` field is
 the tell: if it changes between calls, the backend shifted and identical inputs can
 drift even with the same seed.
 </details>
@@ -285,7 +285,7 @@ What did the server do the instant you disconnected, and why does that save mone
 
 <details><summary>▸ Answer</summary>
 
-It detected the client disconnect and stopped the model call immediately — no
+It detected the client disconnect and stopped the model call immediately, with no
 further tokens generated, nothing billed for output you'd never see. Detecting
 disconnects is a real production cost lever, not just tidiness.
 </details>
@@ -296,7 +296,7 @@ with `--no-rag`. Will the answer change? Which one can you trust, and why?
 <details><summary>▸ Answer</summary>
 
 With retrieval, the model answers from the fact pasted into the prompt ("30
-days"). With `--no-rag` there's no source — "Nimbus Notes" is made up — so it
+days"). With `--no-rag` there's no source, since "Nimbus Notes" is made up, so it
 guesses or admits it doesn't know. That's the whole idea: a model can only answer
 from what's in its context window, and RAG decides what to put there.
 </details>
@@ -304,7 +304,7 @@ from what's in its context window, and RAG decides what to put there.
 **Do (`rag.py`).** Add a new fact to `KNOWLEDGE_BASE` (say,
 `"Nimbus Notes can import notebooks from Evernote and Notion."`) and ask a
 question only that fact can answer. Use `--show-prompt` to confirm it actually got
-retrieved into the context. If it didn't, what would you try — reword the
+retrieved into the context. If it didn't, what would you try? Reword the
 question, or raise `-k`?
 
 ---
@@ -312,5 +312,5 @@ question, or raise `-k`?
 ### Where to take it next
 
 Invent your own. The best exercise is a question *you* genuinely don't know the
-answer to — change one thing, predict the effect, run it, and reconcile the
+answer to. Change one thing, predict the effect, run it, and reconcile the
 difference. That loop is the whole skill.
