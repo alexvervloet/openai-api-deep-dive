@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 """
-ask.py — Ask a question about a code snippet.
-=============================================
+ask.py: Ask a question about a code snippet.
 
 This is the main hands-on tool of the repo. You point it at a file and ask a
 question about it; it builds a chat-completions request, shows you the token
@@ -44,7 +43,7 @@ from utils.tokens import count_message_tokens, count_tokens
 
 
 # A default "system" message. The system role sets the assistant's behavior and
-# persona for the whole conversation — see examples/02_roles.py for more.
+# persona for the whole conversation: see examples/02_roles.py for more.
 DEFAULT_SYSTEM_PROMPT = (
     "You are a precise, friendly senior software engineer helping someone "
     "understand code. Be concrete, point to specific lines, and keep answers "
@@ -60,7 +59,7 @@ def build_messages(system_prompt: str, code: str, question: str) -> list[dict]:
       - system:    the standing instructions / persona.
       - user:      the code, clearly fenced so the model knows where it starts
                    and ends, followed by the question.
-    The model will reply with an `assistant` message — that's the part you don't
+    The model will reply with an `assistant` message, the part you don't
     write; the API generates it.
     """
     user_content = (
@@ -110,7 +109,7 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
         help=(
             "Nucleus sampling, 0.0–1.0. The model samples only from the most "
             "likely tokens whose probabilities sum to top_p. It's an alternative "
-            "to temperature — OpenAI recommends changing one, not both."
+            "to temperature. OpenAI recommends changing one, not both."
         ),
     )
     parser.add_argument(
@@ -169,7 +168,7 @@ def main(argv: list[str]) -> int:
         print(f"Est. cost:     {format_cost(est)} "
               f"(assuming ~{assumed_output:,} output tokens)")
     except KeyError as e:
-        print(f"Est. cost:     unknown — {e}")
+        print(f"Est. cost:     unknown ({e})")
 
     if args.dry_run:
         print("\n[--dry-run] Stopping before the API call. No money spent.")

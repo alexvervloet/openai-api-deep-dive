@@ -1,35 +1,34 @@
 #!/usr/bin/env python3
 """
-rag.py — Retrieval-Augmented Generation, from scratch.
-======================================================
+rag.py: Retrieval-Augmented Generation, from scratch.
 
 This capstone ties two earlier pieces together: embeddings (Section 8 /
 examples/11_embeddings.py) and a chat call (Section 2). It is the smallest thing
-that is recognizably **RAG** — no vector database, no framework, ~one screen of
+that is recognizably **RAG**: no vector database, no framework, ~one screen of
 real logic.
 
 The one big idea:
 
   >> A model can only answer from what's in its context window. RAG is just
-  >> deciding what to put there — you *retrieve* the most relevant text and
+  >> deciding what to put there. You *retrieve* the most relevant text and
   >> *stuff it into the prompt* before asking.
 
 The pipeline, end to end:
 
-  1. EMBED the knowledge base — turn each document into a vector
+  1. EMBED the knowledge base: turn each document into a vector
      (via `client.embeddings.create`, the dedicated embeddings endpoint).
   2. EMBED the question the same way.
-  3. RETRIEVE — score every document against the question with cosine
+  3. RETRIEVE: score every document against the question with cosine
      similarity and keep the top-k closest in meaning.
-  4. AUGMENT — paste those documents into the prompt as "context."
-  5. GENERATE — ask the chat model to answer using ONLY that context.
+  4. AUGMENT: paste those documents into the prompt as "context."
+  5. GENERATE: ask the chat model to answer using ONLY that context.
 
 Why a *made-up* knowledge base below? So you can prove retrieval is doing the
 work. The model has never seen "Nimbus Notes" in training, so it can only answer
 correctly when the right document is retrieved and pasted in. Try `--no-rag` to
 watch it fail (guess or refuse) without the context.
 
-Everything here uses a single OPENAI_API_KEY — the embeddings call and the chat
+Everything here uses a single OPENAI_API_KEY: the embeddings call and the chat
 call hit the same account.
 
 A real app embeds the knowledge base ONCE and stores the vectors (that's what a
@@ -88,7 +87,7 @@ CHAT_MODEL = "gpt-4o-mini"
 GROUNDED_SYSTEM = (
     "You are a support assistant for an app called Nimbus Notes. Answer the "
     "user's question using ONLY the context provided in their message. If the "
-    "context does not contain the answer, say you don't know — do not guess or "
+    "context does not contain the answer, say you don't know. Do not guess or "
     "use outside knowledge."
 )
 
@@ -122,7 +121,7 @@ def retrieve(client, question: str, corpus: list[str], k: int):
 
 def build_user_message(question: str, chunks: list[str]) -> str:
     """Paste the retrieved documents into the prompt as context, then ask. This
-    is the whole "augment" step — RAG is mostly good string assembly."""
+    is the whole "augment" step; RAG is mostly good string assembly."""
     context = "\n".join(f"- {c}" for c in chunks)
     return f"Context:\n{context}\n\nQuestion: {question}"
 
@@ -153,7 +152,7 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
     parser.add_argument(
         "--no-rag",
         action="store_true",
-        help="Skip retrieval and ask the question with NO context — the contrast "
+        help="Skip retrieval and ask the question with NO context. The contrast "
              "that shows why RAG matters.",
     )
     parser.add_argument(

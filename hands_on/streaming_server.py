@@ -1,19 +1,18 @@
 #!/usr/bin/env python3
 """
-streaming_server.py — FastAPI streaming server capstone.
-=========================================================
+streaming_server.py: FastAPI streaming server capstone.
 
 This is the capstone project for the SSE section: a production-style FastAPI
 server that streams OpenAI responses to a browser using Server-Sent Events.
 It shows the three challenges unique to streaming web services:
 
-  1. Token-by-token forwarding — each AI token is wrapped in a JSON SSE event
+  1. Token-by-token forwarding: each AI token is wrapped in a JSON SSE event
      and pushed to the browser as it arrives, not buffered until the end.
 
-  2. Disconnect detection — if the browser closes the tab mid-stream, we detect
+  2. Disconnect detection: if the browser closes the tab mid-stream, we detect
      it and abort the AI request immediately (stops burning tokens).
 
-  3. Error recovery — transient API errors (rate limits, connection blips)
+  3. Error recovery: transient API errors (rate limits, connection blips)
      trigger automatic retries with exponential backoff before the stream
      starts. Mid-stream errors yield a clean error event so the browser can
      show a message rather than hanging indefinitely.
@@ -77,7 +76,7 @@ load_dotenv()
 if not os.getenv("OPENAI_API_KEY"):
     sys.exit("Set OPENAI_API_KEY via secrun (see SECRETS.md) and try again.")
 
-# Async client — essential for FastAPI so the event loop isn't blocked while
+# Async client: essential for FastAPI so the event loop isn't blocked while
 # waiting for the API. Each request gets its own concurrent slot.
 async_client = AsyncOpenAI()
 
@@ -123,15 +122,15 @@ async def _stream_tokens(request: Request, body: StreamRequest):
 
     Three concerns handled here:
 
-    1. Retry before streaming starts — transient errors (rate limit, network)
+    1. Retry before streaming starts: transient errors (rate limit, network)
        are retried with exponential backoff. Once tokens begin flowing we
        don't retry (partial output would confuse the client).
 
-    2. Disconnect detection — `request.is_disconnected()` is polled each
+    2. Disconnect detection: `request.is_disconnected()` is polled each
        iteration. On disconnect we `return` early, which causes the
        StreamingResponse to close its socket and abort the API call.
 
-    3. Partial response — we accumulate tokens into `partial` so that if an
+    3. Partial response: we accumulate tokens into `partial` so that if an
        error occurs mid-stream, the error event includes what was received.
     """
     partial: list[str] = []
@@ -179,7 +178,7 @@ async def _stream_tokens(request: Request, body: StreamRequest):
                     yield _token_event(piece)
 
     except (openai.RateLimitError, openai.APIConnectionError, openai.APITimeoutError) as exc:
-        # Mid-stream transient error — report what we had so far.
+        # Mid-stream transient error. Report what we had so far.
         yield _error_event(str(exc), partial="".join(partial))
         return
     except openai.APIError as exc:
