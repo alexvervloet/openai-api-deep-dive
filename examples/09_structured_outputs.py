@@ -71,7 +71,7 @@ def average(numbers):
 """
 
 response = client.chat.completions.create(
-    model="gpt-4o-mini",
+    model="gpt-5.4-nano",
     messages=[
         {"role": "system", "content": "You are a code reviewer."},
         {"role": "user", "content": f"Review this code:\n```\n{code}\n```"},

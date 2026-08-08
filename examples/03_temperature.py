@@ -35,7 +35,7 @@ prompt = "Give a five-word slogan for a coffee shop on the moon."
 
 for temp in (0.0, 0.7, 1.5, 2.0):
     response = client.chat.completions.create(
-        model="gpt-4o-mini",
+        model="gpt-5.4-nano",
         messages=[{"role": "user", "content": prompt}],
         temperature=temp,
     )

@@ -72,7 +72,7 @@ messages: list[ChatCompletionMessageParam] = [
 
 # First call: the model decides it needs the tool.
 first = client.chat.completions.create(
-    model="gpt-4o-mini",
+    model="gpt-5.4-nano",
     messages=messages,
     tools=tools,
 )
@@ -104,7 +104,7 @@ for call in reply.tool_calls or []:
 
 # Second call: the model now has the data and writes the final answer.
 second = client.chat.completions.create(
-    model="gpt-4o-mini",
+    model="gpt-5.4-nano",
     messages=messages,
     tools=tools,
 )

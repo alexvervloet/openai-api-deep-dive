@@ -72,7 +72,7 @@ else:
 # `detail` can be "low" (cheaper, ~85 tokens, coarse), "high" (more tiles, more
 # detail, more tokens), or "auto" (the default).
 response = client.chat.completions.create(
-    model="gpt-4o-mini",  # the -mini models are multimodal too
+    model="gpt-5.4-nano",  # the -mini models are multimodal too
     messages=[
         {  # type: ignore[arg-type]
             "role": "user",

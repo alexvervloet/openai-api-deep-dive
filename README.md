@@ -3,7 +3,7 @@
 A hands-on playground for learning the OpenAI API **from zero**. You'll build a
 real CLI tool that answers questions about your code, and along the way you'll
 understand every moving part: chat completions, roles, the sampling knobs
-(temperature, top_p, max_tokens, stop), token counting, and cost.
+(temperature, top_p, max_completion_tokens, stop), token counting, and cost.
 
 This repo is meant to be *walked through*, not just read. Each section ends with
 something to run. Do the running; that's where the learning is. And once a
@@ -64,7 +64,7 @@ tiny. The shape of every call you'll ever make is right there:
 
 ```python
 response = client.chat.completions.create(
-    model="gpt-4o-mini",
+    model="gpt-5.4-nano",
     messages=[{"role": "user", "content": "In one sentence, what is an API?"}],
 )
 print(response.choices[0].message.content)
@@ -74,7 +74,7 @@ Three things to internalize:
 
 | Thing | What it is |
 |-------|-----------|
-| `model` | Which model answers. `gpt-4o-mini` is the cheap, fast default. |
+| `model` | Which model answers. `gpt-5.4-nano` is the cheap, fast default. |
 | `messages` | A **list** of messages: your half of the conversation. |
 | `response.choices[0].message.content` | The model's reply text. |
 | `response.usage` | Exactly how many tokens you were billed for. |
@@ -114,7 +114,7 @@ For code and facts, go **low**. For brainstorming, go high.
 secrun python examples/03_temperature.py
 ```
 
-### max_tokens: a hard cap on the answer's length
+### max_completion_tokens: a hard cap on the answer's length
 Caps **output** tokens (not input). The model is cut off when the budget runs
 out: possibly mid-sentence. Watch `finish_reason`: `"length"` means it was
 truncated; `"stop"` means it finished naturally.
@@ -142,7 +142,7 @@ secrun python examples/06_stop_sequences.py
 |------|-------|----------------|---------|
 | `temperature` | 0.0–2.0 | get more variety/creativity | 1.0 |
 | `top_p` | 0.0–1.0 | widen the pool of candidate words | 1.0 |
-| `max_tokens` | ≥1 | allow a longer answer | model max |
+| `max_completion_tokens` | ≥1 | allow a longer answer | model max |
 | `stop` | up to 4 strings | end at a specific marker | none |
 
 ---

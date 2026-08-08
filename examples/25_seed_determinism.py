@@ -51,11 +51,11 @@ TEMPERATURE = 0.9  # real randomness, so a fixed seed's effect is actually visib
 
 def generate(seed=None):
     resp = client.chat.completions.create(
-        model="gpt-4o-mini",
+        model="gpt-5.4-nano",
         messages=[{"role": "user", "content": PROMPT}],
         temperature=TEMPERATURE,
         seed=seed,
-        max_tokens=40,
+        max_completion_tokens=40,
     )
     return (resp.choices[0].message.content or "").strip(), resp.system_fingerprint
 

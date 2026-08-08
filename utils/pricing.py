@@ -9,9 +9,10 @@ than input tokens, which is why a chatty model can cost more than you expect.
 Prices are quoted per 1,000,000 tokens. We store them that way below and divide
 when we estimate.
 
-PRICES CHANGE. The numbers below are a snapshot and may be out of date by the
-    time you read this. Always confirm against the official pricing page:
-        https://platform.openai.com/docs/pricing
+PRICES CHANGE. The numbers below are a snapshot (checked 2026-08-08) and may be
+    out of date by the time you read this. Always confirm against the official
+    pricing page:
+        https://developers.openai.com/api/docs/pricing
     Treat this module as a *teaching tool*, not a billing source of truth.
 """
 
@@ -26,12 +27,25 @@ class ModelPrice:
 
 
 # A small, representative slice of the catalog. Add more as you explore.
-# (input $/1M, output $/1M)
+# Verified against the pricing page on 2026-08-08. (input $/1M, output $/1M)
+#
+# Read the shape of this table, not just the numbers. Each generation has a
+# flagship, a mid tier, and a cheap tier, and the spread between them is roughly
+# 25x. Picking the right tier for a task saves far more than any prompt tweak.
 PRICING: dict[str, ModelPrice] = {
+    # Current generation.
+    "gpt-5.6-sol":     ModelPrice(input_per_1m=5.00, output_per_1m=30.00),
+    "gpt-5.6-terra":   ModelPrice(input_per_1m=2.00, output_per_1m=12.00),
+    "gpt-5.6-luna":    ModelPrice(input_per_1m=0.20, output_per_1m=1.20),
+    # The 5.4 line, which this repo defaults to. See the note in README on why
+    # a slightly older line is the better teaching default.
+    "gpt-5.4-mini":    ModelPrice(input_per_1m=0.75, output_per_1m=4.50),
+    "gpt-5.4-nano":    ModelPrice(input_per_1m=0.20, output_per_1m=1.25),
+    "gpt-5-mini":      ModelPrice(input_per_1m=0.25, output_per_1m=2.00),
+    "gpt-5-nano":      ModelPrice(input_per_1m=0.05, output_per_1m=0.40),
+    # Previous generation, still served. Useful for the cost comparison above.
     "gpt-4o":          ModelPrice(input_per_1m=2.50, output_per_1m=10.00),
     "gpt-4o-mini":     ModelPrice(input_per_1m=0.15, output_per_1m=0.60),
-    "gpt-4-turbo":     ModelPrice(input_per_1m=10.00, output_per_1m=30.00),
-    "gpt-3.5-turbo":   ModelPrice(input_per_1m=0.50, output_per_1m=1.50),
 }
 
 # Embedding models (see examples/11_embeddings.py) are billed differently: there
@@ -87,7 +101,7 @@ def format_cost(usd: float) -> str:
 
 if __name__ == "__main__":
     # Run `python utils/pricing.py` for a quick demo / sanity check.
-    demo_model = "gpt-4o-mini"
+    demo_model = "gpt-5.4-nano"
     cost = estimate_cost(demo_model, input_tokens=1_000, output_tokens=500)
     print(f"{demo_model}: 1,000 in + 500 out  ->  {format_cost(cost)}")
 

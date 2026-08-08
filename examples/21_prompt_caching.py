@@ -50,12 +50,12 @@ STABLE_PREFIX = (
 def ask(question: str):
     """Same long system prefix every time; only the question changes."""
     resp = client.chat.completions.create(
-        model="gpt-4o-mini",
+        model="gpt-5.4-nano",
         messages=[
             {"role": "system", "content": STABLE_PREFIX},  # constant -> cacheable
             {"role": "user", "content": question},          # variable -> at the end
         ],
-        max_tokens=30,
+        max_completion_tokens=30,
     )
     usage = resp.usage
     assert usage is not None

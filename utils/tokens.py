@@ -37,12 +37,12 @@ def _encoding_for(model: str) -> tiktoken.Encoding:
         return tiktoken.get_encoding("o200k_base")
 
 
-def count_tokens(text: str, model: str = "gpt-4o-mini") -> int:
+def count_tokens(text: str, model: str = "gpt-5.4-nano") -> int:
     """Count tokens in a plain string."""
     return len(_encoding_for(model).encode(text))
 
 
-def count_message_tokens(messages: list[dict], model: str = "gpt-4o-mini") -> int:
+def count_message_tokens(messages: list[dict], model: str = "gpt-5.4-nano") -> int:
     """Count tokens for a chat-completions `messages` list.
 
     The API doesn't just concatenate your text. It wraps each message in a few
@@ -75,7 +75,7 @@ def count_message_tokens(messages: list[dict], model: str = "gpt-4o-mini") -> in
 if __name__ == "__main__":
     # Run `python utils/tokens.py` to see tokenization in action.
     sample = "The quick brown fox jumps over the lazy dog."
-    enc = _encoding_for("gpt-4o-mini")
+    enc = _encoding_for("gpt-5.4-nano")
     ids = enc.encode(sample)
     print(f"Text:   {sample!r}")
     print(f"Tokens: {len(ids)}")

@@ -49,12 +49,12 @@ client = OpenAI()
 
 def confidence(question: str):
     resp = client.chat.completions.create(
-        model="gpt-4o-mini",
+        model="gpt-5.4-nano",
         messages=[
             {"role": "system", "content": "Answer with exactly one word: Yes or No."},
             {"role": "user", "content": question},
         ],
-        max_tokens=1,
+        max_completion_tokens=1,
         logprobs=True,  # ask for log-probabilities...
         top_logprobs=5,  # ...and the 5 alternatives at each position
     )

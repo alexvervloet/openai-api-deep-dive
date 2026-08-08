@@ -97,6 +97,6 @@ ask("gpt-4o-mini-does-not-exist", "Hello?")
 
 # 2. A normal request that succeeds, using the tuned client.
 print("\n--- a normal request ---")
-answer = ask("gpt-4o-mini", "In one sentence, why is retry logic important?")
+answer = ask("gpt-5.4-nano", "In one sentence, why is retry logic important?")
 if answer:
     print(answer)

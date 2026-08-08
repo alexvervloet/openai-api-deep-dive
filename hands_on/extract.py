@@ -98,8 +98,8 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
     parser.add_argument("file", help="Path to the free-form text to extract from.")
     parser.add_argument(
         "--model",
-        default="gpt-4o-mini",
-        help="Model to use (default: gpt-4o-mini, the cheap workhorse).",
+        default="gpt-5.4-nano",
+        help="Model to use (default: gpt-5.4-nano, the cheap workhorse).",
     )
     parser.add_argument(
         "--json",

@@ -91,7 +91,7 @@ STATIC_DIR = Path(__file__).parent / "static"
 
 class StreamRequest(BaseModel):
     prompt: str
-    model: str = "gpt-4o-mini"
+    model: str = "gpt-5.4-nano"
     max_tokens: int = 1024
 
 
@@ -144,7 +144,7 @@ async def _stream_tokens(request: Request, body: StreamRequest):
             stream = await async_client.chat.completions.create(
                 model=body.model,
                 messages=[{"role": "user", "content": body.prompt}],
-                max_tokens=body.max_tokens,
+                max_completion_tokens=body.max_tokens,
                 stream=True,
             )
             break

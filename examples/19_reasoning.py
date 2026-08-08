@@ -19,7 +19,7 @@ Three things change about the request:
      under `completion_tokens_details`.
 
 Use a reasoning model when the task is genuinely hard; a normal model like
-gpt-4o-mini is cheaper and faster for everyday requests.
+gpt-5.4-nano is cheaper and faster for everyday requests.
 
 Run it:
 

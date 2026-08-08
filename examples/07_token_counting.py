@@ -45,6 +45,6 @@ for model in PRICING:
     print(f"  {model:<16} {format_cost(cost)}")
 
 print(
-    "\nNotice how much cheaper gpt-4o-mini is than gpt-4o for the same request: "
+    "\nNotice how much cheaper gpt-5.4-nano is than gpt-4o for the same request: "
     "this is why picking the right model matters as much as writing a good prompt."
 )

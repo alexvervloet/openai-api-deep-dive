@@ -74,7 +74,7 @@ PROMPT = "Give three one-sentence reasons why streaming matters for AI UIs."
 print("=== raw SSE events (as they appear on the wire) ===\n")
 
 stream = client.chat.completions.create(
-    model="gpt-4o-mini",
+    model="gpt-5.4-nano",
     messages=[{"role": "user", "content": PROMPT}],
     stream=True,
     stream_options={"include_usage": True},  # usage arrives in the final chunk

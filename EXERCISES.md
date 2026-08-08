@@ -66,7 +66,7 @@ never a 100% guarantee). At `1.5` they'll diverge, sometimes wildly. This is the
 whole point of the knob: low for facts/code, high for variety.
 </details>
 
-**Do.** In `examples/04_max_tokens.py`, set `max_tokens` to something tiny like
+**Do.** In `examples/04_max_tokens.py`, set `max_completion_tokens` to something tiny like
 `10` and ask for a paragraph. Inspect `finish_reason`. What value do you get, and
 what does it tell you?
 
@@ -112,7 +112,7 @@ and why might code cost more than prose?
 ## Section 6: Cost **(offline)**
 
 **Predict.** A request is 2,000 input tokens and 500 output tokens. Using the
-prices in `utils/pricing.py`, will it cost more on `gpt-4o-mini` or `gpt-4o`?
+prices in `utils/pricing.py`, will it cost more on `gpt-5.4-nano` or `gpt-4o`?
 Roughly how many times more?
 
 <details><summary>▸ Answer</summary>

@@ -82,8 +82,8 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
 
     parser.add_argument(
         "--model",
-        default="gpt-4o-mini",
-        help="Model to use (default: gpt-4o-mini, the cheap workhorse).",
+        default="gpt-5.4-nano",
+        help="Model to use (default: gpt-5.4-nano, the cheap workhorse).",
     )
     parser.add_argument(
         "--system",
@@ -198,9 +198,22 @@ def main(argv: list[str]) -> int:
     if args.top_p is not None:
         request["top_p"] = args.top_p
     if args.max_tokens is not None:
-        request["max_tokens"] = args.max_tokens
+        # The CLI flag stays --max-tokens because that is what people call it,
+        # but the wire parameter is max_completion_tokens: gpt-5.x rejects the
+        # old max_tokens name outright.
+        request["max_completion_tokens"] = args.max_tokens
     if args.stop is not None:
-        request["stop"] = args.stop
+        # `stop` is not supported on the gpt-5 line (see examples/06). Rather
+        # than let the API 400 on a flag the user deliberately passed, say so
+        # and carry on without it.
+        if args.model.startswith("gpt-5"):
+            print(
+                f"note: --stop is not supported on {args.model} and will be ignored.\n"
+                f"      Use --max-tokens for a length cap, or a JSON schema for a shape.",
+                file=sys.stderr,
+            )
+        else:
+            request["stop"] = args.stop
 
     print("\nCalling the API...\n")
     response = client.chat.completions.create(**request)

@@ -45,7 +45,7 @@ console = Console()  # rich's entry point; console.print() understands rich obje
 # Ask explicitly for Markdown, then hand the string to rich.Markdown so headings,
 # bold, and lists render as formatting instead of literal symbols.
 response = client.chat.completions.create(
-    model="gpt-4o-mini",
+    model="gpt-5.4-nano",
     messages=[
         {
             "role": "user",
@@ -80,7 +80,7 @@ table.add_column("Model", style="cyan", no_wrap=True)
 table.add_column("Good for", style="white")
 table.add_column("Relative cost", justify="right", style="green")
 
-table.add_row("gpt-4o-mini", "Everyday tasks, high volume", "$")
+table.add_row("gpt-5.4-nano", "Everyday tasks, high volume", "$")
 table.add_row("gpt-4o", "Harder reasoning, vision", "$$$")
 
 console.print(table)

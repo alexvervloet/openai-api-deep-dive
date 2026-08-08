@@ -80,7 +80,7 @@ KNOWLEDGE_BASE = [
 DEMO_QUESTION = "How long do I have to recover a note I deleted?"
 
 EMBED_MODEL = "text-embedding-3-small"
-CHAT_MODEL = "gpt-4o-mini"
+CHAT_MODEL = "gpt-5.4-nano"
 
 # The grounding instruction. This is what keeps a RAG system honest: answer from
 # the supplied context, and admit ignorance rather than inventing facts.

@@ -1,9 +1,9 @@
 """
-Example 04: max_tokens (and finish_reason).
+Example 04: max_completion_tokens (and finish_reason).
 
-`max_tokens` caps how many tokens the model is allowed to GENERATE. It does NOT
-limit your input, and it does NOT make the model "summarize to fit". It simply
-cuts the model off when the budget runs out, mid-sentence if necessary.
+`max_completion_tokens` caps how many tokens the model is allowed to GENERATE.
+It does NOT limit your input, and it does NOT make the model "summarize to fit".
+It simply cuts the model off when the budget runs out, mid-sentence if necessary.
 
 Why use it?
   - Cost control: output tokens are the expensive ones.
@@ -12,7 +12,22 @@ Why use it?
 
 The companion to watch is `finish_reason`:
   - "stop"   : the model finished on its own.
-  - "length" : it hit your max_tokens cap, so the answer is truncated.
+  - "length" : it hit your cap, so the answer is truncated.
+
+A NAME CHANGE WORTH KNOWING
+    This parameter used to be called `max_tokens`, and most tutorials still
+    call it that. On the gpt-5 line the old name is rejected outright:
+
+        Unsupported parameter: 'max_tokens' is not supported with this model.
+        Use 'max_completion_tokens' instead.
+
+    The rename is not cosmetic. On reasoning models the budget covers tokens
+    you never see: the model's internal reasoning is generated, billed, and
+    counted against this cap before a single visible character is produced.
+    "Completion" tokens is the honest name for what is being capped. That is
+    also why a cap that looks generous can still return an EMPTY string with
+    finish_reason "length": the reasoning ate the whole budget. If you get a
+    blank answer, raise the cap before you suspect your prompt.
 
 Run it:
 
@@ -37,11 +52,11 @@ prompt = "Explain how the internet works."
 # the loop. But remember larger numbers incur more cost.
 for cap in (16, 256):
     response = client.chat.completions.create(
-        model="gpt-4o-mini",
+        model="gpt-5.4-nano",
         messages=[{"role": "user", "content": prompt}],
-        max_tokens=cap,
+        max_completion_tokens=cap,
     )
     choice = response.choices[0]
-    print(f"--- max_tokens={cap} (finish_reason={choice.finish_reason}) ---")
+    print(f"--- max_completion_tokens={cap} (finish_reason={choice.finish_reason}) ---")
     print(choice.message.content)
     print()

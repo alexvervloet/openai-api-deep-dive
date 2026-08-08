@@ -59,9 +59,9 @@ def create_batch() -> str:
             "method": "POST",
             "url": "/v1/chat/completions",
             "body": {
-                "model": "gpt-4o-mini",
+                "model": "gpt-5.4-nano",
                 "messages": [{"role": "user", "content": prompt}],
-                "max_tokens": 20,
+                "max_completion_tokens": 20,
             },
         }))
     jsonl = "\n".join(lines).encode("utf-8")
