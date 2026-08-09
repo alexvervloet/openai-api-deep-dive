@@ -1,5 +1,8 @@
-# The official OpenAI Python SDK (v1.x). This is the `from openai import OpenAI` style.
-openai>=1.30.0
+# The official OpenAI Python SDK (v2.x). This is the `from openai import OpenAI`
+# style, unchanged from v1: the v2 rewrite did not touch anything this repo uses.
+# The upper bound is there so a future major release cannot land silently, which
+# is exactly how the MCP dive broke in July 2026.
+openai>=2.0,<3
 
 # tiktoken is OpenAI's tokenizer. We use it to count tokens *before* sending a
 # request, so we can estimate cost and avoid surprises.
