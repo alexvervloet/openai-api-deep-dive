@@ -270,6 +270,28 @@ the tell: if it changes between calls, the backend shifted and identical inputs 
 drift even with the same seed.
 </details>
 
+**Predict (Responses API, `26_responses_api.py`).** Step 3 asks for a news story
+from *this week* rather than something like "the capital of France." Predict what
+the `output` items list would look like for each question, and say why the example
+deliberately picks the harder one.
+
+<details><summary>▸ Answer</summary>
+
+"Capital of France" returns just `['message']`: the model knows the answer and
+decides a search is not worth it, so the hosted tool never fires and the lesson is
+invisible. The news question returns `['web_search_call', ..., 'message']`, often
+with several search calls, because the model cannot answer it from training data at
+all. The point generalizes past this example: declaring a tool does not mean the
+tool runs. The model still decides, so when you are testing whether tool wiring
+works, you have to ask something that genuinely requires the tool, or you will
+"verify" a path that never executed.
+</details>
+
+**Do (Responses API).** Rewrite step 2 to use Chat Completions instead, keeping
+the same two-turn conversation. Compare the `input_tokens` on the second turn.
+Which approach re-uploads the transcript, and at what conversation length would
+that start to matter?
+
 ---
 
 ## Capstones 9, 10 & 11

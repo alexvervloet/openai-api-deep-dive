@@ -384,6 +384,24 @@ backend change that can break determinism.
 secrun python examples/25_seed_determinism.py
 ```
 
+### The Responses API: OpenAI's other endpoint
+Everything above uses `chat.completions.create`. There is a second endpoint,
+`responses.create`, and you will meet it in OpenAI's own docs. It buys you two
+things Chat Completions genuinely cannot do: **server-side conversation state**
+(pass `previous_response_id` instead of re-sending the transcript) and **hosted
+tools** like `web_search` that run on OpenAI's side with no tool loop of yours.
+It is also what replaced the Assistants API, which shuts down **2026-08-26**.
+
+The catch is portability. `/v1/chat/completions` is the industry's common
+dialect: Ollama, LM Studio, vLLM, LiteLLM and most hosts implement it, which is
+exactly why [example 17](examples/17_local_serving.py) can point the same client
+at a local model by changing `base_url`. The Responses API is OpenAI's own
+shape, so building on it gives that up. Reach for it when you want the hosted
+tools or the state badly enough to accept the lock-in.
+```bash
+secrun python examples/26_responses_api.py
+```
+
 ---
 
 ## 9. The second capstone: `extract.py`
@@ -599,6 +617,7 @@ examples/
   23_moderation.py          ← the free safety classifier (flags + per-category scores)
   24_logprobs.py            ← token probabilities -> confidence & calibrated classification
   25_seed_determinism.py    ← seed pins down randomness (best-effort reproducibility)
+  26_responses_api.py       ← the other endpoint: hosted tools + server-side state
 ```
 
 ---
