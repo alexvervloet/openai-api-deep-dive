@@ -39,7 +39,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from dotenv import load_dotenv
 
 from utils.pricing import estimate_cost, format_cost
-from utils.tokens import count_message_tokens, count_tokens
+from utils.tokens import count_message_tokens
 
 
 # A default "system" message. The system role sets the assistant's behavior and
