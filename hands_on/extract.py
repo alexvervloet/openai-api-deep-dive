@@ -137,7 +137,7 @@ def render(console: Console, data: Extraction) -> None:
             str(i),
             item.task,
             item.owner,
-            item.due or "—",
+            item.due or "n/a",
             f"[{color}]{item.priority.value}[/{color}]",
         )
 

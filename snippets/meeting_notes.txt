@@ -1,11 +1,11 @@
-Project Phoenix — weekly sync, Tuesday
+Project Phoenix: weekly sync, Tuesday
 
 Good turnout today. Maria walked us through the new onboarding flow; overall the
 team is happy with it but the empty-state screens still feel unfinished. Maria
 said she'll polish those before the design review on Friday.
 
 We're still blocked on the analytics migration. Devon is going to chase the data
-team this week — he thinks it's pretty urgent because the launch depends on it.
+team this week. He thinks it's pretty urgent because the launch depends on it.
 If we don't have the new pipeline by end of month we'll have to slip the date.
 
 Priya raised that nobody has written the release notes yet. She volunteered to
