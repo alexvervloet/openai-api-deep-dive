@@ -54,7 +54,7 @@ There is no universally correct setting, only fit to task. Extracting data from 
 
 **stop** sequences end generation the moment a given string would appear. They sound like a niche tool and mostly are, but when you want exactly three list items, or output up to a delimiter, they are cleaner than asking politely and hoping.
 
-A pattern worth noticing: none of these knobs change what the model knows or what it can do. They change how it selects among things it was already inclined to say. Later rungs of the course (retrieval, tools, fine-tuning) are for changing the other things. Keeping "which lever changes what" straight is half of AI engineering judgment, and there is a whole guide in the root of this series ([CHOOSING.md](../CHOOSING.md)) devoted to it.
+A pattern worth noticing: none of these knobs change what the model knows or what it can do. They change how it selects among things it was already inclined to say. Later rungs of the course (retrieval, tools, fine-tuning) are for changing the other things. Keeping "which lever changes what" straight is half of AI engineering judgment, and there is a whole guide in the root of this series ([CHOOSING.md](../docs/CHOOSING.md)) devoted to it.
 
 ## 1.5 Tokens: the unit of everything
 
