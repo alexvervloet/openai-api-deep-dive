@@ -12,7 +12,7 @@ That decision, model behind an API rather than model as a download, is the reaso
 
 When ChatGPT arrived in November 2022, it looked like a leap. Under the hood it was mostly packaging: a chat interface, some fine-tuning to make the model behave like an assistant, and a conversation loop. The API you are about to learn is that machinery with the lid off. Once you understand it, ChatGPT stops being magic and becomes something you could sketch on a whiteboard. That is the goal of this chapter.
 
-The one big idea, stated once here and then earned over the following pages:
+The one big idea, stated once here and then demonstrated over the following pages:
 
 > **You send a list of messages. You get back a message.**
 
@@ -50,7 +50,7 @@ There is no universally correct setting, only fit to task. Extracting data from 
 
 **top_p** attacks the same problem from a different angle. Instead of rescaling the menu, it truncates it: consider only the smallest set of tokens whose probabilities add up to p, and choose among those. At top_p 0.1 the model may only pick from the obvious candidates; at 1.0 the whole menu is available. This is called nucleus sampling, and the standard advice, repeated here because it is good, is to tune temperature or top_p but not both. They interact in ways that are hard to reason about, and a setting that behaves one way alone behaves differently in combination.
 
-**max_completion_tokens** is not a creativity knob at all; it is a budget cap on the length of the answer. The model does not know the cap exists and does not write shorter to fit it. It just gets cut off, sometimes mid-sentence, when the budget runs out. The response tells you which happened: a `finish_reason` of "stop" means the model chose to end, "length" means the guillotine came down. Checking that field is the difference between an app that quietly truncates answers and one that knows it did.
+**max_completion_tokens** is not a creativity knob at all; it is a budget cap on the length of the answer. The model does not know the cap exists and does not write shorter to fit it. It just gets cut off, sometimes mid-sentence, when the budget runs out. The response tells you which happened: a `finish_reason` of "stop" means the model chose to end, "length" means the guillotine came down. Checking that field is the difference between an app that truncates answers and never says so, and one that knows it did.
 
 **stop** sequences end generation the moment a given string would appear. They sound like a niche tool and mostly are, but when you want exactly three list items, or output up to a delimiter, they are cleaner than asking politely and hoping.
 
@@ -78,7 +78,7 @@ Ask a model for a long answer and it might take twenty seconds to finish. Twenty
 
 The wire protocol underneath is Server-Sent Events, a piece of web plumbing that predates the AI boom by more than a decade. An SSE response is just an HTTP response that never closes, dripping lines prefixed with `data:` until the server is done. It was designed for stock tickers and notification feeds, sat in relative obscurity for years, and then turned out to be exactly the right shape for language model output. There is a lesson in that about boring technology.
 
-The SDK hides the parsing, and for a while you can let it. But the moment you build a backend that sits between the model and a browser (which is to say, the moment you build a real product), you are implementing the middle of a relay: receive SSE from the provider, forward events to the client, notice when the client disconnects, and stop the upstream generation so you do not pay for tokens nobody will read. The lab's streaming server capstone walks through exactly that, including the disconnect handling, which is the part everyone forgets and the part that costs money.
+The SDK hides the parsing, and for a while you can let it. But the moment you build a backend that sits between the model and a browser (which is to say, the moment you build a real product), you are implementing the middle of a relay: receive SSE from the provider, forward events to the client, notice when the client disconnects, and stop the upstream generation so you do not pay for tokens nobody will read. The lab's streaming server capstone walks through exactly that, including the disconnect handling, which everyone forgets and which costs money.
 
 ## 1.7 From prose to data: structured output and tool calling
 
@@ -112,9 +112,9 @@ A production application uses a handful of other capabilities that deserve a par
 
 **Logprobs** expose the probabilities behind each chosen token, which turns the model's private uncertainty into a number you can act on: route low-confidence classifications to a human, flag shaky answers, debug why the model keeps picking the wrong label.
 
-**Seeds** make sampling reproducible on a best-effort basis, which matters for tests and evaluations. Best-effort is the honest phrase: the API returns a fingerprint of the backend configuration, and when the fingerprint changes, determinism quietly breaks. Treat reproducibility as a strong hint, not a contract.
+**Seeds** make sampling reproducible on a best-effort basis, which matters for tests and evaluations. Best-effort is the honest phrase: the API returns a fingerprint of the backend configuration, and when the fingerprint changes, determinism breaks with nothing to announce it. Treat reproducibility as a strong hint, not a contract.
 
-**Reasoning models** (the o-series and their successors) spend hidden tokens thinking before they answer, which buys real gains on math, logic, and code at the price of latency and cost, including paying for thinking you never see. They also change the control surface: you steer effort rather than temperature. They get fuller treatment in the Claude chapter, where the equivalent feature exposes its reasoning for inspection.
+**Reasoning models** (the o-series and their successors) spend hidden tokens thinking before they answer, which buys real gains on math, logic, and code at the price of latency and cost, including paying for thinking you never see. They also change what you steer with: effort, rather than temperature. They get fuller treatment in the Claude chapter, where the equivalent feature exposes its reasoning for inspection.
 
 ## 1.10 What you paid for the abstraction
 
