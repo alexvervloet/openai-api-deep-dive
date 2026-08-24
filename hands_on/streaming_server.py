@@ -57,6 +57,7 @@ See examples/16_sse.py to understand the underlying SSE protocol.
 
 import asyncio
 import json
+import logging
 import os
 import sys
 import time
@@ -75,6 +76,9 @@ from pydantic import BaseModel
 load_dotenv()
 if not os.getenv("OPENAI_API_KEY"):
     sys.exit("Set OPENAI_API_KEY via secrun (see SECRETS.md) and try again.")
+
+logging.basicConfig(level=logging.INFO, format="%(asctime)s %(message)s")
+logger = logging.getLogger("streaming_server")
 
 # Async client: essential for FastAPI so the event loop isn't blocked while
 # waiting for the API. Each request gets its own concurrent slot.
@@ -105,7 +109,18 @@ def _token_event(text: str) -> str:
 def _done_event(tokens: int, elapsed: float) -> str:
     return f"data: {json.dumps({'type': 'done', 'tokens': tokens, 'elapsed': round(elapsed, 2)})}\n\n"
 
-def _error_event(message: str, partial: str = "") -> str:
+def _error_event(message: str, exc: Exception | None = None, partial: str = "") -> str:
+    """
+    Build an error event. The browser gets `message`; the exception goes to the log.
+
+    That split is the point. Provider errors quote your request back at you, and a
+    401 from OpenAI includes a masked fragment of the API key that produced it.
+    The browser is an untrusted client, so it gets a sentence it can act on and
+    nothing more. You keep the detail on the server, where you are already
+    watching the terminal that uvicorn is printing to.
+    """
+    if exc is not None:
+        logger.warning("%s: %s", type(exc).__name__, exc)
     payload: dict = {"type": "error", "message": message}
     if partial:
         payload["partial"] = partial
@@ -154,14 +169,14 @@ async def _stream_tokens(request: Request, body: StreamRequest):
                 # Exponential backoff: 1s, 2s before giving up.
                 await asyncio.sleep(1.0 * (2 ** attempt))
         except openai.AuthenticationError as exc:
-            yield _error_event(f"Authentication failed: {exc}")
+            yield _error_event("Authentication failed. Check the server log.", exc)
             return
         except openai.BadRequestError as exc:
-            yield _error_event(f"Bad request: {exc}")
+            yield _error_event("The API rejected the request. Check the server log.", exc)
             return
 
     if stream is None:
-        yield _error_event(f"Could not reach the API after 3 attempts: {last_exc}")
+        yield _error_event("Could not reach the API after 3 attempts.", last_exc)
         return
 
     # --- Phase 2: stream tokens to the client ---
@@ -179,10 +194,14 @@ async def _stream_tokens(request: Request, body: StreamRequest):
 
     except (openai.RateLimitError, openai.APIConnectionError, openai.APITimeoutError) as exc:
         # Mid-stream transient error. Report what we had so far.
-        yield _error_event(str(exc), partial="".join(partial))
+        yield _error_event(
+            "The connection to the API dropped mid-stream.", exc, partial="".join(partial)
+        )
         return
     except openai.APIError as exc:
-        yield _error_event(str(exc), partial="".join(partial))
+        yield _error_event(
+            "The API ended the stream with an error.", exc, partial="".join(partial)
+        )
         return
 
     # --- Phase 3: final stats event ---
