@@ -54,7 +54,10 @@ def confidence(question: str):
             {"role": "system", "content": "Answer with exactly one word: Yes or No."},
             {"role": "user", "content": question},
         ],
-        max_completion_tokens=1,
+        # "One word" does not guarantee one generated token. Leave a little room
+        # so the model can finish instead of returning a length-truncated response.
+        # Logprob alternatives are response metadata and do not use this budget.
+        max_completion_tokens=4,
         logprobs=True,  # ask for log-probabilities...
         top_logprobs=5,  # ...and the 5 alternatives at each position
     )
