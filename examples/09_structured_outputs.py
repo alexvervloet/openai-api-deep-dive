@@ -14,7 +14,7 @@ There are two levels:
   2. Structured Outputs: `response_format={"type": "json_schema", ...}` with
      `"strict": True`.
      Guarantees the output *conforms to a JSON Schema you provide*, the right
-     keys, the right types, every time. This is the robust choice. We use it
+     keys, the right types, every time. This is the reliable choice. We use it
      below.
 
 Either way, the content still comes back as a *string*, so you parse it with
