@@ -10,7 +10,7 @@ is, what it buys you, and what it costs you.
 WHY IT EXISTS
     Chat Completions is stateless and text-in/text-out. Everything else, memory,
     tool execution, file search, is your job. OpenAI's first answer to that was
-    the Assistants API, which is **being shut down on 2026-08-26**. The Responses
+    the Assistants API, which was **shut down on 2026-08-26**. The Responses
     API (plus the Conversations API) is what replaced it: the same stateful,
     tool-running ideas, on a cleaner endpoint.
 
