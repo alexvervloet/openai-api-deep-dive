@@ -22,7 +22,7 @@ a one-word reply, it will often still commit to a single token with near-100%
 "confidence". It's just reproducing the most statistically common phrasing
 for that kind of question, not reporting epistemic uncertainty. Low-confidence,
 split logprobs show up when the model is genuinely torn between plausible
-continuations (ambiguous classification, or tasks it tends to get wrong) 
+continuations (ambiguous classification, or tasks it tends to get wrong),
 not when it lacks information it never had a way to access.
 
 This script asks a yes/no question, then prints the probability of the answer
@@ -78,7 +78,7 @@ QUESTIONS = [
     "Will it rain in Paris next Tuesday?",  # unknowable, but watch the model still
     # answer near-100% confident. See the
     # CAVEAT above
-    "Is a hot dog a sandwich?",  # genuinely contested classification 
+    "Is a hot dog a sandwich?",  # genuinely contested classification:
     # training data argues both ways, so the
     # logprobs are more likely to split
 ]
