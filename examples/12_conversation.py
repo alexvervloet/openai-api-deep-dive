@@ -53,7 +53,7 @@ def trim_history(
     """Keep the system message + the most recent `max_turns` messages.
 
     Every turn you keep is re-sent (and re-billed) on the next request, so real
-    apps cap the history. Drop the oldest turns and the model forgets them 
+    apps cap the history. Drop the oldest turns and the model forgets them,
     proof that "memory" is just the list you choose to send.
     """
     if len(history) <= max_turns + 1:
