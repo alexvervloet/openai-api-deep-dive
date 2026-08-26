@@ -9,8 +9,8 @@ running on your own machine. You change two things and nothing else:
     client = OpenAI(base_url="http://localhost:11434/v1", api_key="ollama")
 
 `base_url` points at the local server; `api_key` is required by the SDK but
-ignored by the local server (any non-empty string works). Everything you learned 
-roles, the sampling knobs, streaming, token usage, works unchanged.
+ignored by the local server (any non-empty string works). Everything you learned
+works unchanged: roles, the sampling knobs, streaming, token usage.
 
 Why bother? Privacy (data never leaves the machine), cost (no per-token bill),
 and offline use. The trade-off is you run and scale the server yourself, and the
