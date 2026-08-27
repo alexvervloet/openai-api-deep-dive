@@ -42,7 +42,7 @@ This example has three parts:
   Part 3, partial accumulation: show how a server buffers tokens in memory
            to track progress and recover from interruptions.
 
-The capstone that puts all of this into practice is hands_on/streaming_server.py
+The capstone that puts all of this into practice is hands_on/streaming_server.py,
 a FastAPI server that streams tokens over SSE to a real browser.
 
 Run it:
