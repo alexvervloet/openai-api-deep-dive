@@ -55,7 +55,7 @@ def build_messages(system_prompt: str, code: str, question: str) -> list[dict]:
     """Assemble the chat-format message list.
 
     A chat request is a *list of messages*, each with a `role` and `content`.
-    Here we use three messages:
+    Here we use two messages:
       - system:    the standing instructions / persona.
       - user:      the code, clearly fenced so the model knows where it starts
                    and ends, followed by the question.
