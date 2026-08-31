@@ -6,6 +6,12 @@ Custom tools are requests, not remote procedure calls. The model emits a typed
 the allowed function, and returns a `function_call_output` item with the same
 call ID. Nothing executes merely because the model named it.
 
+Note which controls actually bound this loop. `tool_choice` and
+`parallel_tool_calls` shape what the model may ask for. The dispatch table and
+the argument check decide what runs. `max_tool_calls` looks like it belongs
+here and does not: it caps built-in tools such as web search, so on a custom
+function it is silently inert. Example 05 is where it has an effect.
+
 Predict before running
     The first response is forced to call one function. Which output item will
     carry the call, and which field connects its result to the second request?
@@ -67,7 +73,6 @@ first = client.responses.create(
     input="What is the weather in Tokyo?",
     tools=tools,
     tool_choice={"type": "function", "name": TOOL_NAME},
-    max_tool_calls=1,
     parallel_tool_calls=False,
 )
 
