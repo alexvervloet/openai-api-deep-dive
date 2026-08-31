@@ -6,21 +6,21 @@ openai>=2.0,<3
 
 # tiktoken is OpenAI's tokenizer. We use it to count tokens *before* sending a
 # request, so we can estimate cost and avoid surprises.
-tiktoken>=0.7.0
+tiktoken>=0.7.0,<1
 
 # Loads variables from a .env file (like OPENAI_API_KEY) into the environment.
-python-dotenv>=1.0.0
+python-dotenv>=1.0.0,<2
 
 # Pydantic models define + validate the structured outputs in examples 14 and
 # extract.py. The OpenAI SDK turns a model into a strict schema and returns a
 # validated instance. (Pydantic v2.)
-pydantic>=2.0.0
+pydantic>=2.0.0,<3
 
 # rich renders Markdown, syntax-highlighted code, and tables in the terminal 
 # used by example 15 and extract.py to format model output nicely.
-rich>=13.0.0
+rich>=13.0.0,<16
 
 # FastAPI + uvicorn power the streaming_server.py capstone. FastAPI handles
 # the HTTP layer; uvicorn is the ASGI server that runs it.
-fastapi>=0.100.0
-uvicorn[standard]>=0.20.0
+fastapi>=0.100.0,<1
+uvicorn[standard]>=0.20.0,<1
