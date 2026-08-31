@@ -154,6 +154,16 @@ That removes a network round trip from your process. It does not answer whether 
 tool should have access to the data. Set `tool_choice` deliberately, narrow tool scope,
 and keep external results on the untrusted side of your system boundary.
 
+Structured output survives the move, but its parameter does not. `response_format`
+becomes `text.format`, and because an unknown key is ignored rather than rejected,
+a migration that misses the rename produces prose where a schema used to be, with
+no error to catch. The deeper point outlasts the rename. A schema is a constraint on
+what the model may emit, not a promise that it finishes emitting it. Cut a strict
+request short and `responses.create` reports `status="incomplete"` with a truncated
+string, while `responses.parse` raises a validation error from inside the SDK,
+because there is no half object to hand back. Convenient parsing and a failure mode
+you have to catch are the same feature.
+
 Background mode separates the response lifetime from one HTTP connection. The initial
 request returns an ID and a status. Poll only while the status is `queued` or
 `in_progress`; any other status is terminal and needs its own handling. Cancellation is
@@ -166,7 +176,7 @@ polling can work. The current details live in the official
 I would still teach Chat Completions first. It is small, and compatible endpoints exist
 across local runtimes and other providers. I would use Responses for a new OpenAI-only
 application when typed items, hosted tools, or managed state remove code I would
-otherwise have to own. The six scripts under `responses/` make that choice concrete.
+otherwise have to own. The eight scripts under `responses/` make that choice concrete.
 They are a second interface to the same engineering problems, not a second foundation.
 
 ## 1.11 What you paid for the abstraction
