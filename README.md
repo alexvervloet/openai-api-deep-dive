@@ -394,6 +394,11 @@ contain messages, reasoning items, custom tool calls, or hosted tool calls. Use
 `output_text` when you only need its combined text. Inspect `output` when item type or
 tool metadata matters.
 
+These eight are terser than the numbered examples above, and deliberately so: they
+assume you already have the reflexes from Sections 2 to 8 and spend their words on
+what is different rather than re-teaching what a role or a token is. If a script here
+feels dense, the matching example above is the gentler version of the same idea.
+
 Work through these in order:
 
 | Example | What it makes observable |
@@ -404,6 +409,8 @@ Work through these in order:
 | [04 custom tool loop](responses/04_custom_tool_loop.py) | The model proposes a call. Your application validates and executes it. |
 | [05 hosted web search](responses/05_hosted_web_search.py) | OpenAI executes a required hosted tool and returns call evidence and sources. |
 | [06 background responses](responses/06_background_responses.py) | A response ID supports later retrieval, bounded polling, and cancellation. |
+| [07 structured outputs](responses/07_structured_outputs.py) | `response_format` becomes `text.format`. A schema constrains shape, not completion. |
+| [08 conversation object](responses/08_conversation_object.py) | A durable object collects items across jobs, and refuses to combine with a response chain. |
 
 ```bash
 secrun python responses/01_request_and_items.py
@@ -412,6 +419,8 @@ secrun python responses/03_streaming_events.py
 secrun python responses/04_custom_tool_loop.py
 secrun python responses/05_hosted_web_search.py
 secrun python responses/06_background_responses.py start
+secrun python responses/07_structured_outputs.py
+secrun python responses/08_conversation_object.py
 ```
 
 Two state mechanisms deserve separate names. `previous_response_id` chains one response
@@ -419,7 +428,10 @@ to the next. A Conversation is a durable object that can collect items across se
 jobs, or devices. The two cannot be supplied on the same request. Neither is a token
 discount. The model still receives the usable context, and OpenAI bills those earlier
 input tokens again. Response objects are stored for 30 days by default. Conversation
-objects and their items do not use that 30-day expiry. Read the official
+objects and their items do not use that 30-day expiry, so a Conversation is storage
+you own and eventually have to delete. Example 08 builds one, reads its items back,
+provokes the 400 you get for sending both mechanisms, and cleans up after itself.
+Read the official
 [conversation-state guide](https://developers.openai.com/api/docs/guides/conversation-state)
 before choosing either mechanism for user data.
 
@@ -648,12 +660,14 @@ examples/
   24_logprobs.py            ← token probabilities -> confidence & calibrated classification
   25_seed_determinism.py    ← seed pins down randomness (best-effort reproducibility)
 responses/
-  01_request_and_items.py   ← request shape, output items, metadata & usage
-  02_conversation_state.py  ← response chains, instructions & billing
-  03_streaming_events.py    ← typed stream events, text deltas & terminal status
-  04_custom_tool_loop.py    ← validate and execute a local function request
-  05_hosted_web_search.py   ← require hosted search and inspect its sources
+  01_request_and_items.py    ← request shape, output items, metadata & usage
+  02_conversation_state.py   ← response chains, instructions & billing
+  03_streaming_events.py     ← typed stream events, text deltas & terminal status
+  04_custom_tool_loop.py     ← validate and execute a local function request
+  05_hosted_web_search.py    ← require hosted search and inspect its sources
   06_background_responses.py ← start, retrieve, poll & cancel asynchronous work
+  07_structured_outputs.py   ← text.format, parse, and what truncation does to both
+  08_conversation_object.py  ← durable server-side items vs a response chain
 ```
 
 ---
