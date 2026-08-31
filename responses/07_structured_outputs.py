@@ -3,8 +3,9 @@ Responses 07: get a validated object back instead of a string.
 
 Examples 09 and 14 did this on Chat Completions with `response_format`. That
 parameter does not exist here. The Responses equivalent is `text.format`, and
-the rename is the whole migration hazard: the old key is not an error you can
-see, it is a key the endpoint does not read.
+the endpoint handles the rename gracefully: send `response_format` and you get a
+400 whose message names `text.format` and links the docs. Verified, not assumed.
+The migration hazard is not the rename. It is what follows.
 
 Two levels, same as before. `responses.create` with a `text.format` of
 `json_schema` guarantees the text conforms to a schema you wrote, and you still

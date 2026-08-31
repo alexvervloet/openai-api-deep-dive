@@ -155,14 +155,17 @@ tool should have access to the data. Set `tool_choice` deliberately, narrow tool
 and keep external results on the untrusted side of your system boundary.
 
 Structured output survives the move, but its parameter does not. `response_format`
-becomes `text.format`, and because an unknown key is ignored rather than rejected,
-a migration that misses the rename produces prose where a schema used to be, with
-no error to catch. The deeper point outlasts the rename. A schema is a constraint on
-what the model may emit, not a promise that it finishes emitting it. Cut a strict
-request short and `responses.create` reports `status="incomplete"` with a truncated
-string, while `responses.parse` raises a validation error from inside the SDK,
-because there is no half object to hand back. Convenient parsing and a failure mode
-you have to catch are the same feature.
+becomes `text.format`. That rename is the one migration hazard the endpoint handles
+well: send the old key and you get a 400 that names the new one, so the failure is
+loud and self-explaining rather than a silent fall back to prose. Worth noticing as a
+piece of API design, because the failure that follows is not so considerate.
+
+A schema is a constraint on what the model may emit, not a promise that it finishes
+emitting it. Cut a strict request short and `responses.create` reports
+`status="incomplete"` with a truncated string, while `responses.parse` raises a
+validation error from inside the SDK, because there is no half object to hand back.
+Convenient parsing and a failure mode you have to catch are the same feature, and
+nothing in the schema warns you about it.
 
 Background mode separates the response lifetime from one HTTP connection. The initial
 request returns an ID and a status. Poll only while the status is `queued` or
