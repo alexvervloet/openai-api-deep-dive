@@ -21,6 +21,7 @@ from collections.abc import Callable
 
 from dotenv import load_dotenv
 from openai import OpenAI
+from openai.types.responses import ResponseInputParam, ToolParam
 
 load_dotenv()
 if not os.getenv("OPENAI_API_KEY"):
@@ -44,7 +45,7 @@ dispatch: dict[str, Callable[[str], dict[str, str]]] = {
     TOOL_NAME: get_current_weather,
 }
 
-tools = [
+tools: list[ToolParam] = [
     {
         "type": "function",
         "name": TOOL_NAME,
@@ -70,7 +71,8 @@ first = client.responses.create(
     parallel_tool_calls=False,
 )
 
-tool_outputs: list[dict[str, str]] = []
+tool_outputs: ResponseInputParam = []
+call_ids: list[str] = []
 for item in first.output:
     if item.type != "function_call":
         continue
@@ -98,6 +100,7 @@ for item in first.output:
             "output": json.dumps(result),
         }
     )
+    call_ids.append(item.call_id)
 
 if not tool_outputs:
     sys.exit(f"Expected a {TOOL_NAME} call, but received {[item.type for item in first.output]}")
@@ -113,4 +116,4 @@ second = client.responses.create(
 )
 
 print(f"\nFinal answer: {second.output_text}")
-print(f"Call IDs returned: {[item['call_id'] for item in tool_outputs]}")
+print(f"Call IDs returned: {call_ids}")
