@@ -19,6 +19,7 @@ from collections import Counter
 
 from dotenv import load_dotenv
 from openai import OpenAI
+from openai.types.responses import ResponseUsage
 
 load_dotenv()
 if not os.getenv("OPENAI_API_KEY"):
@@ -37,7 +38,7 @@ stream = client.responses.create(
 
 event_counts: Counter[str] = Counter()
 terminal_status = "stream ended without a terminal response event"
-usage = None
+usage: ResponseUsage | None = None
 
 for event in stream:
     event_counts[event.type] += 1
