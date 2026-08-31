@@ -302,6 +302,22 @@ prints `event.delta` for every event. Run it. Which event types have no `delta` 
 and which terminal information would the simplified loop lose even if it skipped those
 errors?
 
+<details><summary>▸ Answer</summary>
+
+On a plain text run, exactly one of the nine event types carries `delta`:
+`response.output_text.delta`. The other eight raise `AttributeError`.
+`response.created`, `response.in_progress` and `response.completed` are lifecycle
+events, `response.output_item.added/done` and `response.content_part.added/done`
+announce structure, and `response.output_text.done` carries the finished string as
+`text`, not `delta`.
+
+Guarding with `getattr(event, "delta", "")` stops the crash and still loses the
+answer. Only the terminal event carries `response`, and with it the final `status`
+and `usage`. A loop that renders deltas and ignores everything else cannot tell a
+completed answer from one truncated at `max_output_tokens`, and has no token counts
+to log. It prints something that looks finished either way.
+</details>
+
 **Predict (`responses/04_custom_tool_loop.py`).** The tool schema uses strict mode and
 an enum. Why does the application still keep a dispatch allowlist and validate the
 decoded city before calling Python code?
@@ -320,6 +336,22 @@ different tool definition.
 the output item types and explain why merely listing a tool is not proof that it ran.
 Then restore `required` and confirm the call item appears.
 
+<details><summary>▸ Answer</summary>
+
+Asking "why is the sky blue?" under `auto` returned `['message']` on three runs out
+of three. The tool was offered every time and used none of them, because the model
+already had the answer and searching is a cost it avoids when it sees no need. Under
+`required` the same request returns `['web_search_call', 'message']`.
+
+So a tool in the request is a permission, not an event. `auto` says the model may
+search; only a `web_search_call` item in `output` says it did. That gap is why the
+example checks for the item rather than trusting the configuration, and it is the
+same reasoning as example 04's dispatch allowlist seen from the other side: there,
+naming a function does not run it; here, offering a tool does not use it. If your
+logging records the request instead of the output items, you will believe you have
+citations you never received.
+</details>
+
 **Do (`responses/06_background_responses.py`).** Start a response and save its ID. Use
 `check`, then `wait`. Start another response and call `cancel` twice with the same ID.
 Record every status you observe. Why must a production poller stop on any status outside
@@ -331,6 +363,48 @@ Record every status you observe. Why must a production poller stop on any status
 `completed` can poll forever after work has already stopped. Cancellation is idempotent,
 so the second cancellation returns the final response rather than starting a second
 state transition.
+</details>
+
+**Predict (`responses/07_structured_outputs.py`).** The script sends the same schema
+three ways: through `create`, through `parse`, and through `parse` with a 16-token cap.
+Which of the three can hand your code a Python object it should not trust, and which
+one never returns at all?
+
+<details><summary>▸ Answer</summary>
+
+`create` is the one to watch. Under the cap it returns normally with
+`status="incomplete"` and `output_text` holding a truncated fragment such as
+`'{"service":"checkout","severity":"sev2",'`. Nothing about that return says failure.
+Call `json.loads` on it and you get a decode error at best, and if the truncation
+happened to land on a syntactically complete object, a silently wrong record at worst.
+The status field is the only thing that tells you.
+
+`parse` under the cap never returns: it raises `pydantic.ValidationError` from inside
+the SDK, because half an object cannot be validated into a whole one. That is the
+friendlier failure of the two, and the reason to prefer `parse` when you can accept an
+exception. Either way the schema did its job and the request still failed, which is
+the distinction worth keeping: strict mode constrains the shape of what is emitted,
+not whether emission finishes.
+</details>
+
+**Predict (`responses/08_conversation_object.py`).** The second turn uploads a
+28-character question, and the transcript now lives on OpenAI's servers rather than in
+your request. Predict the billed input tokens, then compare with the number example 02
+printed for the same exchange over `previous_response_id`.
+
+<details><summary>▸ Answer</summary>
+
+They are the same order of magnitude and for the same reason: 60 tokens here against 66
+for the response chain, both far more than the 28 characters uploaded. Where the
+transcript is stored changes what your client transmits. It does not change what the
+model reads, and you are billed for what the model reads.
+
+This is the point both state mechanisms are most often misread on. Neither is a cache
+and neither is a discount. `previous_response_id` and `conversation` are answers to
+"who holds the transcript", one process versus one durable object, and the honest
+reason to pick the Conversation is that items must outlive the process or be shared
+across jobs. If you want the token bill to stop growing, that is a context-engineering
+problem, and it is the subject of a later dive rather than a parameter on this request.
 </details>
 
 ---
