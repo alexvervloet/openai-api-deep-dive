@@ -170,7 +170,7 @@ def main(argv: list[str]) -> int:
     # Both the embeddings call and the chat call need the same key.
     if not os.getenv("OPENAI_API_KEY"):
         print(
-            "OPENAI_API_KEY is not set. Store it in your keychain and run under `secrun` (see SECRETS.md).",
+            "OPENAI_API_KEY is not set. Store it in your keychain and run under `secrun` (see ../docs/SECRETS.md).",
             file=sys.stderr,
         )
         return 1

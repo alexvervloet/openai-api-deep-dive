@@ -179,7 +179,7 @@ def main(argv: list[str]) -> int:
     if not os.getenv("OPENAI_API_KEY"):
         print(
             "\nOPENAI_API_KEY is not set. Store it in your keychain and run under `secrun` "
-            "(see SECRETS.md), or run with --dry-run to skip the API call.",
+            "(see ../docs/SECRETS.md), or run with --dry-run to skip the API call.",
             file=sys.stderr,
         )
         return 1

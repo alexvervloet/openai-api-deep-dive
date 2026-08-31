@@ -40,7 +40,7 @@ from openai import OpenAI
 
 load_dotenv()
 if not os.getenv("OPENAI_API_KEY"):
-    sys.exit("Set OPENAI_API_KEY via secrun (see SECRETS.md) and try again.")
+    sys.exit("Set OPENAI_API_KEY via secrun (see ../docs/SECRETS.md) and try again.")
 
 # Per-client config. `timeout` is in seconds; `max_retries` overrides the
 # default of 2. (You can also override per-call with

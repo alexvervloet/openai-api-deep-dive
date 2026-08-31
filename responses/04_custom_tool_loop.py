@@ -31,7 +31,7 @@ from openai.types.responses import ResponseInputParam, ToolParam
 
 load_dotenv()
 if not os.getenv("OPENAI_API_KEY"):
-    sys.exit("Set OPENAI_API_KEY via secrun (see SECRETS.md) and try again.")
+    sys.exit("Set OPENAI_API_KEY via secrun (see ../docs/SECRETS.md) and try again.")
 
 MODEL = os.getenv("OPENAI_MODEL", "gpt-5.4-nano")
 TOOL_NAME = "get_current_weather"

@@ -75,7 +75,7 @@ from pydantic import BaseModel
 
 load_dotenv()
 if not os.getenv("OPENAI_API_KEY"):
-    sys.exit("Set OPENAI_API_KEY via secrun (see SECRETS.md) and try again.")
+    sys.exit("Set OPENAI_API_KEY via secrun (see ../docs/SECRETS.md) and try again.")
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(message)s")
 logger = logging.getLogger("streaming_server")
