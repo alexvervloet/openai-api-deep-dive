@@ -5,6 +5,11 @@ A Responses stream is not a sequence of interchangeable text chunks. It can
 carry lifecycle, output-item, content-part, text-delta, tool, and error events.
 This example renders text deltas while still recording every event type it saw.
 
+The terminal branch matches on class rather than on a set of type strings. Both
+select the same three events at runtime, but only `isinstance` tells a type
+checker which member of the event union it is holding, so `event.response` is
+checked instead of assumed.
+
 Predict before running
     Will `response.output_text.delta` be the only event type in the stream?
     Watch the event summary after the answer finishes.
@@ -19,7 +24,12 @@ from collections import Counter
 
 from dotenv import load_dotenv
 from openai import OpenAI
-from openai.types.responses import ResponseUsage
+from openai.types.responses import (
+    ResponseCompletedEvent,
+    ResponseFailedEvent,
+    ResponseIncompleteEvent,
+    ResponseUsage,
+)
 
 load_dotenv()
 if not os.getenv("OPENAI_API_KEY"):
@@ -45,7 +55,9 @@ for event in stream:
 
     if event.type == "response.output_text.delta":
         print(event.delta, end="", flush=True)
-    elif event.type in {"response.completed", "response.failed", "response.incomplete"}:
+    elif isinstance(
+        event, (ResponseCompletedEvent, ResponseFailedEvent, ResponseIncompleteEvent)
+    ):
         terminal_status = event.response.status
         usage = event.response.usage
 
