@@ -116,7 +116,60 @@ A production application uses a handful of other capabilities that deserve a par
 
 **Reasoning models** (the o-series and their successors) spend hidden tokens thinking before they answer, which buys real gains on math, logic, and code at the price of latency and cost, including paying for thinking you never see. They also change what you steer with: effort, rather than temperature. They get fuller treatment in the Claude chapter, where the equivalent feature exposes its reasoning for inspection.
 
-## 1.10 What you paid for the abstraction
+## 1.10 The Responses API changes the shape, not the engineering
+
+Chat Completions is a transcript interface. You send messages and receive a choice with
+an assistant message. The Responses API models a run instead. You send `input` plus
+request-level `instructions`, and receive an ordered list of typed output items. A plain
+answer usually contains a message item. A run that reasons or uses tools can contain
+reasoning items and tool-call items as well. The SDK's `output_text` property collects
+message text for the common case, but it does not turn the underlying result into a
+text-only contract. Production code should branch on item type whenever tools or item
+metadata matter.
+
+The item model pays off in streaming. A stream contains typed lifecycle and content
+events rather than anonymous chunks. `response.output_text.delta` carries displayable
+text. Other events announce output items, content parts, completion, failure, or an
+incomplete result. A user interface can render text deltas and still record the terminal
+response for usage and failure handling. Treating every event as text discards the part
+of the protocol that tells you whether the run finished.
+
+State needs a less flattering explanation than "memory." Passing
+`previous_response_id` means the client no longer uploads the whole transcript. OpenAI
+reconstructs the chain on its side. The model still receives that context, and the
+earlier input tokens are still billed on the new request. Request instructions do not
+carry forward through the ID, so repeat them when they still apply. Response objects are
+stored for 30 days by default. Conversation objects provide a longer-lived container
+for items and do not use that 30-day expiry. A request can use a Conversation or
+`previous_response_id`, not both. The official
+[conversation-state guide](https://developers.openai.com/api/docs/guides/conversation-state)
+should be part of any retention review, not an implementation footnote.
+
+Tools split into two execution models. A custom function call is still a proposal. The
+model supplies a name and JSON arguments, your application checks them against its own
+allowlist, and only then does your code run. The result returns as a
+`function_call_output` item tied to the proposal by `call_id`. Hosted tools such as web
+search run inside OpenAI's service and return their call items alongside the answer.
+That removes a network round trip from your process. It does not answer whether the
+tool should have access to the data. Set `tool_choice` deliberately, narrow tool scope,
+and keep external results on the untrusted side of your system boundary.
+
+Background mode separates the response lifetime from one HTTP connection. The initial
+request returns an ID and a status. Poll only while the status is `queued` or
+`in_progress`; any other status is terminal and needs its own handling. Cancellation is
+idempotent. A deadline is still necessary because a caller should not wait forever for
+a state transition. Background execution also has a data-handling cost. Even with
+`store=False`, OpenAI temporarily stores response data so asynchronous execution and
+polling can work. The current details live in the official
+[background-mode guide](https://developers.openai.com/api/docs/guides/background).
+
+I would still teach Chat Completions first. It is small, and compatible endpoints exist
+across local runtimes and other providers. I would use Responses for a new OpenAI-only
+application when typed items, hosted tools, or managed state remove code I would
+otherwise have to own. The six scripts under `responses/` make that choice concrete.
+They are a second interface to the same engineering problems, not a second foundation.
+
+## 1.11 What you paid for the abstraction
 
 A textbook should tell you not just what a design gives you but what it costs. The chat completions abstraction is clean, and three of its edges will cut you if you do not know where they are.
 
@@ -128,11 +181,15 @@ The interface is friendlier than the system. A request that types-checks and ret
 
 None of these are reasons to avoid the API. They are the reasons the rest of this course exists.
 
-## 1.11 Where this chapter leaves you
+## 1.12 Where this chapter leaves you
 
 The lab for this dive ends with four small capstones: a CLI that answers questions about code with the cost shown before you spend, an extractor that turns messy notes into validated data, a streaming web server, and a from-scratch RAG pipeline. Between them they touch every idea in this chapter, which is the point. You should leave this dive with the reflexes, not just the vocabulary: check `finish_reason`, count tokens before sending, put the constant part of the prompt first, treat the model's confidence as a style rather than a signal.
 
-One closing note on portability, because it explains a choice this course makes. This dive teaches the Chat Completions interface even though OpenAI now recommends its newer Responses API for new OpenAI-only projects. The reason is that Chat Completions escaped. Nearly every other provider, and every local model runtime you will meet in the Local Models dive, implements it as a de facto standard, the way SQL outgrew IBM. Learn it once and you can talk to almost anything that generates text, including a model running on your own laptop with no API key at all. The next chapter looks at the most important dialect: the same ideas, as Anthropic builds them.
+The main path uses Chat Completions because nearly every provider and local runtime you
+will meet in the Local Models dive implements its shape. The `responses/` mini-track
+then shows where OpenAI's own endpoint differs and where it earns that loss of
+portability. The next chapter carries the same application concerns into Anthropic's
+API.
 
 ---
 
