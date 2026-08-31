@@ -1,9 +1,9 @@
 # OpenAI API: A Guided Deep Dive
 
 A hands-on playground for learning the OpenAI API from zero. You'll build a real CLI
-tool that answers questions about your code, and along the way you'll understand every
-moving part. Chat completions, roles, the sampling knobs (temperature, top_p,
-max_completion_tokens, stop), token counting, and cost.
+tool that answers questions about your code. The main path teaches Chat Completions,
+roles, sampling controls, token counting, and cost. A focused track under `responses/`
+then teaches OpenAI's Responses API without turning it into a separate course.
 
 Walk through this repo rather than reading it. Each section ends with something to run.
 Do the running. That is where the learning is. And once a section clicks,
@@ -384,23 +384,68 @@ signals a backend change that can break determinism.
 secrun python examples/25_seed_determinism.py
 ```
 
-### The Responses API, OpenAI's other endpoint
-Everything above uses `chat.completions.create`. There is a second endpoint,
-`responses.create`, and you will meet it in OpenAI's own docs. It buys you two things
-Chat Completions genuinely cannot do. Server-side conversation state, where you pass
-`previous_response_id` instead of re-sending the transcript, and hosted tools like
-`web_search` that run on OpenAI's side with no tool loop of yours. It is also what
-replaced the Assistants API, which shuts down 2026-08-26.
+### Responses API mini-track
 
-The catch is portability. `/v1/chat/completions` is the industry's common dialect.
-Ollama, LM Studio, vLLM, LiteLLM, and most hosts implement it, which is exactly why
-[example 17](examples/17_local_serving.py) can point the same client at a local model by
-changing `base_url`. The Responses API is OpenAI's own shape, so building on it gives
-that up. Reach for it when you want the hosted tools or the state badly enough to accept
-the lock-in.
+Everything above uses `chat.completions.create`. OpenAI recommends
+`responses.create` for new OpenAI projects, while Chat Completions remains supported.
+The request changes from `messages` to `input` and `instructions`. The response changes
+more: `output` is a list of typed items, not a list of text choices. A response may
+contain messages, reasoning items, custom tool calls, or hosted tool calls. Use
+`output_text` when you only need its combined text. Inspect `output` when item type or
+tool metadata matters.
+
+Work through these in order:
+
+| Example | What it makes observable |
+|---|---|
+| [01 request and items](responses/01_request_and_items.py) | The request shape, response metadata, usage, and typed output items. |
+| [02 conversation state](responses/02_conversation_state.py) | An ID replaces transcript upload, but earlier context is still billed. Instructions must be repeated. |
+| [03 streaming events](responses/03_streaming_events.py) | Text deltas share the stream with lifecycle and item events. |
+| [04 custom tool loop](responses/04_custom_tool_loop.py) | The model proposes a call. Your application validates and executes it. |
+| [05 hosted web search](responses/05_hosted_web_search.py) | OpenAI executes a required hosted tool and returns call evidence and sources. |
+| [06 background responses](responses/06_background_responses.py) | A response ID supports later retrieval, bounded polling, and cancellation. |
+
 ```bash
-secrun python examples/26_responses_api.py
+secrun python responses/01_request_and_items.py
+secrun python responses/02_conversation_state.py
+secrun python responses/03_streaming_events.py
+secrun python responses/04_custom_tool_loop.py
+secrun python responses/05_hosted_web_search.py
+secrun python responses/06_background_responses.py start
 ```
+
+Two state mechanisms deserve separate names. `previous_response_id` chains one response
+to the next. A Conversation is a durable object that can collect items across sessions,
+jobs, or devices. The two cannot be supplied on the same request. Neither is a token
+discount. The model still receives the usable context, and OpenAI bills those earlier
+input tokens again. Response objects are stored for 30 days by default. Conversation
+objects and their items do not use that 30-day expiry. Read the official
+[conversation-state guide](https://developers.openai.com/api/docs/guides/conversation-state)
+before choosing either mechanism for user data.
+
+Hosted tools remove your client-side execution loop. They also move execution and data
+handling into OpenAI's service. Choose the tool on the server, narrow its scope, inspect
+the returned call items, and treat web results as untrusted input. For functions in your
+own process, keep the allowlist and argument checks shown in example 04.
+
+Background mode solves connection lifetime, not job ownership. Store the response ID,
+poll only while its status is `queued` or `in_progress`, stop on every other status, and
+put a deadline around the polling loop. Example 06 also makes the retention tradeoff
+plain: `store=False` still requires temporary storage while asynchronous work runs. See
+the official [background-mode guide](https://developers.openai.com/api/docs/guides/background)
+for the current retention rules.
+
+There is still a portability cost. `/v1/chat/completions` is implemented by Ollama, LM
+Studio, vLLM, LiteLLM, and many hosted providers. That is why
+[example 17](examples/17_local_serving.py) can switch to a local model by changing
+`base_url`. The Responses API is OpenAI's endpoint. Use it when its item model, hosted
+tools, or state handling saves real application work. Use Chat Completions when provider
+portability matters.
+
+Official references: [Responses API](https://developers.openai.com/api/docs/guides/migrate-to-responses),
+[streaming](https://developers.openai.com/api/docs/guides/streaming-responses),
+[function calling](https://developers.openai.com/api/docs/guides/function-calling), and
+[web search](https://developers.openai.com/api/docs/guides/tools-web-search).
 
 ---
 
@@ -511,21 +556,9 @@ Further on:
   hands-on in the [Agents dive](https://github.com/alexvervloet/agents-deep-dive), where
   streaming happens inside the tool loop.
 
-Every one of these sits on top of the "send messages, get a message" idea you started
-with.
-
-> **A note on the Responses API.** This dive uses **Chat Completions**
-> (`client.chat.completions.create`), the long-stable, universal interface that
-> every other provider and local server also implements, which is exactly why it's
-> the right thing to learn first. OpenAI now also offers a newer **Responses API**
-> (`client.responses.create`), which folds tools, state, and multi-step runs into one
-> endpoint and is their recommended default for *new* OpenAI-only apps. The
-> underlying pieces are identical. You still send messages and get a message back, with
-> the same models, streaming, structured outputs, and token accounting, so everything
-> here transfers directly. Reach for Responses when you want its built-in conversation
-> state and server-side tools and don't need provider portability. Reach for Chat
-> Completions, which is what this dive uses, when you want the interface that runs
-> everywhere.
+Every one of these builds on the request, context, output, and usage concepts you met at
+the start. The wire format changes between Chat Completions and Responses. Those four
+concerns do not.
 
 ---
 
@@ -614,7 +647,13 @@ examples/
   23_moderation.py          ← the free safety classifier (flags + per-category scores)
   24_logprobs.py            ← token probabilities -> confidence & calibrated classification
   25_seed_determinism.py    ← seed pins down randomness (best-effort reproducibility)
-  26_responses_api.py       ← the other endpoint: hosted tools + server-side state
+responses/
+  01_request_and_items.py   ← request shape, output items, metadata & usage
+  02_conversation_state.py  ← response chains, instructions & billing
+  03_streaming_events.py    ← typed stream events, text deltas & terminal status
+  04_custom_tool_loop.py    ← validate and execute a local function request
+  05_hosted_web_search.py   ← require hosted search and inspect its sources
+  06_background_responses.py ← start, retrieve, poll & cancel asynchronous work
 ```
 
 ---
