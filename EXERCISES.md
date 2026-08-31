@@ -270,27 +270,68 @@ the tell: if it changes between calls, the backend shifted and identical inputs 
 drift even with the same seed.
 </details>
 
-**Predict (Responses API, `26_responses_api.py`).** Step 3 asks for a news story
-from *this week* rather than something like "the capital of France." Predict what
-the `output` items list would look like for each question, and say why the example
-deliberately picks the harder one.
+## Responses API mini-track
+
+**Recall (`responses/01_request_and_items.py`).** Why does the example print
+`response.output_text` for the answer but still enumerate `response.output`? What bug
+can appear if application code reads only `response.output[0]`?
 
 <details><summary>▸ Answer</summary>
 
-"Capital of France" returns just `['message']`: the model knows the answer and
-decides a search is not worth it, so the hosted tool never fires and the lesson is
-invisible. The news question returns `['web_search_call', ..., 'message']`, often
-with several search calls, because the model cannot answer it from training data at
-all. The point generalizes past this example: declaring a tool does not mean the
-tool runs. The model still decides, so when you are testing whether tool wiring
-works, you have to ask something that genuinely requires the tool, or you will
-"verify" a path that never executed.
+`output_text` combines the text from message items and is the convenient path when text
+is all you need. `output` is heterogeneous. A response can include reasoning, tool-call,
+and message items, and the API does not promise that the first item is a message. Code
+that assumes it is will fail as soon as the model or tool configuration adds another
+item type.
 </details>
 
-**Do (Responses API).** Rewrite step 2 to use Chat Completions instead, keeping
-the same two-turn conversation. Compare the `input_tokens` on the second turn.
-Which approach re-uploads the transcript, and at what conversation length would
-that start to matter?
+**Predict (`responses/02_conversation_state.py`).** The follow-up request uploads one
+short string plus `previous_response_id`. Which earlier data is still part of the model
+context and token bill? Does the first request's `instructions` field carry forward?
+
+<details><summary>▸ Answer</summary>
+
+The response chain still supplies the earlier input and output to the model, and those
+input tokens are billed again. The response ID reduces the transcript your client sends.
+It does not reduce model context. Instructions do not carry forward, so the follow-up
+must repeat them when they still apply.
+</details>
+
+**Debug (`responses/03_streaming_events.py`).** Replace the event loop with code that
+prints `event.delta` for every event. Run it. Which event types have no `delta` field,
+and which terminal information would the simplified loop lose even if it skipped those
+errors?
+
+**Predict (`responses/04_custom_tool_loop.py`).** The tool schema uses strict mode and
+an enum. Why does the application still keep a dispatch allowlist and validate the
+decoded city before calling Python code?
+
+<details><summary>▸ Answer</summary>
+
+The schema constrains model output at the API boundary. It does not grant authority to
+execute a function. The application owns that decision and must reject unknown names or
+arguments before they reach code with database, network, or filesystem access. The
+checks also protect the boundary if a response is replayed, forged, or produced under a
+different tool definition.
+</details>
+
+**Do (`responses/05_hosted_web_search.py`).** Change `tool_choice="required"` to
+`tool_choice="auto"` and ask a timeless factual question. Run it several times. Record
+the output item types and explain why merely listing a tool is not proof that it ran.
+Then restore `required` and confirm the call item appears.
+
+**Do (`responses/06_background_responses.py`).** Start a response and save its ID. Use
+`check`, then `wait`. Start another response and call `cancel` twice with the same ID.
+Record every status you observe. Why must a production poller stop on any status outside
+`queued` and `in_progress`, rather than waiting only for `completed`?
+
+<details><summary>▸ Answer</summary>
+
+`failed`, `cancelled`, and `incomplete` are terminal too. A loop that waits only for
+`completed` can poll forever after work has already stopped. Cancellation is idempotent,
+so the second cancellation returns the final response rather than starting a second
+state transition.
+</details>
 
 ---
 
