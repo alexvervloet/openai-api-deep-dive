@@ -1,6 +1,6 @@
 # Exercises: make the learning stick
 
-Reading code teaches you less than *predicting* what it will do and then checking.
+Reading code teaches you less than *predicting* what it'll do and then checking.
 This file turns each section of the [README](README.md) into a few quick
 active-recall prompts: a thing to predict, a thing to change, and a question to
 answer from memory. None take more than a couple of minutes.
@@ -225,7 +225,7 @@ call (`cached_tokens`).
 </details>
 
 **Do (async, `22_async_concurrency.py`).** It runs 6 prompts sequentially, then 4-at-
-a-time. Why is the concurrent run ~faster, and what is the `Semaphore` protecting?
+a-time. Why is the concurrent run ~faster, and what's the `Semaphore` protecting?
 
 <details><summary>▸ Answer</summary>
 
@@ -280,7 +280,7 @@ can appear if application code reads only `response.output[0]`?
 
 `output_text` combines the text from message items and is the convenient path when text
 is all you need. `output` is heterogeneous. A response can include reasoning, tool-call,
-and message items, and the API does not promise that the first item is a message. Code
+and message items, and the API doesn't promise that the first item is a message. Code
 that assumes it is will fail as soon as the model or tool configuration adds another
 item type.
 </details>
@@ -293,7 +293,7 @@ context and token bill? Does the first request's `instructions` field carry forw
 
 The response chain still supplies the earlier input and output to the model, and those
 input tokens are billed again. The response ID reduces the transcript your client sends.
-It does not reduce model context. Instructions do not carry forward, so the follow-up
+It doesn't reduce model context. Instructions don't carry forward, so the follow-up
 must repeat them when they still apply.
 </details>
 
@@ -313,7 +313,7 @@ announce structure, and `response.output_text.done` carries the finished string 
 
 Guarding with `getattr(event, "delta", "")` stops the crash and still loses the
 answer. Only the terminal event carries `response`, and with it the final `status`
-and `usage`. A loop that renders deltas and ignores everything else cannot tell a
+and `usage`. A loop that renders deltas and ignores everything else can't tell a
 completed answer from one truncated at `max_output_tokens`, and has no token counts
 to log. It prints something that looks finished either way.
 </details>
@@ -324,7 +324,7 @@ decoded city before calling Python code?
 
 <details><summary>▸ Answer</summary>
 
-The schema constrains model output at the API boundary. It does not grant authority to
+The schema constrains model output at the API boundary. It doesn't grant authority to
 execute a function. The application owns that decision and must reject unknown names or
 arguments before they reach code with database, network, or filesystem access. The
 checks also protect the boundary if a response is replayed, forged, or produced under a
@@ -333,7 +333,7 @@ different tool definition.
 
 **Do (`responses/05_hosted_web_search.py`).** Change `tool_choice="required"` to
 `tool_choice="auto"` and ask a timeless factual question. Run it several times. Record
-the output item types and explain why merely listing a tool is not proof that it ran.
+the output item types and explain why merely listing a tool isn't proof that it ran.
 Then restore `required` and confirm the call item appears.
 
 <details><summary>▸ Answer</summary>
@@ -345,10 +345,10 @@ already had the answer and searching is a cost it avoids when it sees no need. U
 
 So a tool in the request is a permission, not an event. `auto` says the model may
 search; only a `web_search_call` item in `output` says it did. That gap is why the
-example checks for the item rather than trusting the configuration, and it is the
+example checks for the item rather than trusting the configuration, and it's the
 same reasoning as example 04's dispatch allowlist seen from the other side: there,
-naming a function does not run it; here, offering a tool does not use it. If your
-logging records the request instead of the output items, you will believe you have
+naming a function doesn't run it; here, offering a tool doesn't use it. If your
+logging records the request instead of the output items, you'll believe you have
 citations you never received.
 </details>
 
@@ -367,7 +367,7 @@ state transition.
 
 **Predict (`responses/07_structured_outputs.py`).** The script sends the same schema
 three ways: through `create`, through `parse`, and through `parse` with a 16-token cap.
-Which of the three can hand your code a Python object it should not trust, and which
+Which of the three can hand your code a Python object it shouldn't trust, and which
 one never returns at all?
 
 <details><summary>▸ Answer</summary>
@@ -380,10 +380,10 @@ happened to land on a syntactically complete object, a silently wrong record at 
 The status field is the only thing that tells you.
 
 `parse` under the cap never returns: it raises `pydantic.ValidationError` from inside
-the SDK, because half an object cannot be validated into a whole one. That is the
+the SDK, because half an object can't be validated into a whole one. That's the
 friendlier failure of the two, and the reason to prefer `parse` when you can accept an
 exception. Either way the schema did its job and the request still failed, which is
-the distinction worth keeping: strict mode constrains the shape of what is emitted,
+the distinction worth keeping: strict mode constrains the shape of what's emitted,
 not whether emission finishes.
 </details>
 
@@ -394,17 +394,17 @@ printed for the same exchange over `previous_response_id`.
 
 <details><summary>▸ Answer</summary>
 
-They are the same order of magnitude and for the same reason: 60 tokens here against 66
+They're the same order of magnitude and for the same reason: 60 tokens here against 66
 for the response chain, both far more than the 28 characters uploaded. Where the
-transcript is stored changes what your client transmits. It does not change what the
-model reads, and you are billed for what the model reads.
+transcript is stored changes what your client transmits. It doesn't change what the
+model reads, and you're billed for what the model reads.
 
 This is the point both state mechanisms are most often misread on. Neither is a cache
 and neither is a discount. `previous_response_id` and `conversation` are answers to
 "who holds the transcript", one process versus one durable object, and the honest
 reason to pick the Conversation is that items must outlive the process or be shared
-across jobs. If you want the token bill to stop growing, that is a context-engineering
-problem, and it is the subject of a later dive rather than a parameter on this request.
+across jobs. If you want the token bill to stop growing, that's a context-engineering
+problem, and it's the subject of a later dive rather than a parameter on this request.
 </details>
 
 ---
