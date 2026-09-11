@@ -6,7 +6,7 @@ roles, sampling controls, token counting, and cost. A focused track under `respo
 then teaches OpenAI's Responses API without turning it into a separate course.
 
 Walk through this repo rather than reading it. Each section ends with something to run.
-Do the running. That is where the learning is. And once a section clicks,
+Do the running. That's where the learning is. And once a section clicks,
 [EXERCISES.md](EXERCISES.md) has a quick predict-then-run prompt for it. Committing to
 an answer before you run is what makes it stick.
 
@@ -59,7 +59,7 @@ secrun python examples/01_basic_chat.py
 ```
 
 Open [examples/01_basic_chat.py](examples/01_basic_chat.py) and read it. It's tiny. The
-shape of every call you will ever make is right there:
+shape of every call you'll ever make is right there:
 
 ```python
 response = client.chat.completions.create(
@@ -97,7 +97,7 @@ secrun python examples/02_roles.py
 
 **Experiment:** open [examples/02_roles.py](examples/02_roles.py), change the system
 message to `"You are a grumpy pirate."`, and rerun. Same question, completely different
-voice. That is the system role doing its job.
+voice. That's the system role doing its job.
 
 ---
 
@@ -130,7 +130,7 @@ secrun python examples/05_top_p.py
 
 ### stop, to halt generation at a marker
 Up to four strings, each of which ends generation the moment it would appear. The stop
-text itself is not included. Good for cutting lists short or stopping at a delimiter.
+text itself isn't included. Good for cutting lists short or stopping at a delimiter.
 ```bash
 secrun python examples/06_stop_sequences.py
 ```
@@ -249,7 +249,7 @@ secrun python examples/10_function_calling.py
 
 ### Embeddings, turning text into vectors for search and similarity
 A different endpoint, `client.embeddings.create`, converts text into numbers that
-capture meaning. It is what semantic search and retrieval (RAG) are built on. The
+capture meaning. It's what semantic search and retrieval (RAG) are built on. The
 example ranks sentences by similarity to a query, including ones that share no words
 with it at all.
 ```bash
@@ -285,7 +285,7 @@ secrun python examples/14_pydantic_validation.py
 ### Formatting output as Markdown, tables, and code blocks
 Models answer in Markdown, and dumped raw to a terminal that is a mess of literal
 `**asterisks**`. The `rich` library renders Markdown, syntax-highlighted code, and real
-tables in the terminal. That is the difference between output you skim and output you
+tables in the terminal. That's the difference between output you skim and output you
 squint at.
 ```bash
 secrun python examples/15_rich_output.py
@@ -377,7 +377,7 @@ tests, caching, and reproducible evals, even with real randomness in play. The e
 runs at `temperature=0.9` on purpose so you can watch the seed do the work. The same
 seed twice gives identical output, no seed twice gives different output. At
 `temperature=0` the model is already deterministic, so the seed would have nothing
-visible to do; in production you would combine both for the strongest guarantee. Either
+visible to do; in production you'd combine both for the strongest guarantee. Either
 way this is best-effort rather than a guarantee, so watch `system_fingerprint`, which
 signals a backend change that can break determinism.
 ```bash
@@ -396,7 +396,7 @@ tool metadata matters.
 
 These eight are terser than the numbered examples above, and deliberately so: they
 assume you already have the reflexes from Sections 2 to 8 and spend their words on
-what is different rather than re-teaching what a role or a token is. If a script here
+what's different rather than re-teaching what a role or a token is. If a script here
 feels dense, the matching example above is the gentler version of the same idea.
 
 Work through these in order:
@@ -425,10 +425,10 @@ secrun python responses/08_conversation_object.py
 
 Two state mechanisms deserve separate names. `previous_response_id` chains one response
 to the next. A Conversation is a durable object that can collect items across sessions,
-jobs, or devices. The two cannot be supplied on the same request. Neither is a token
+jobs, or devices. The two can't be supplied on the same request. Neither is a token
 discount. The model still receives the usable context, and OpenAI bills those earlier
 input tokens again. Response objects are stored for 30 days by default. Conversation
-objects and their items do not use that 30-day expiry, so a Conversation is storage
+objects and their items don't use that 30-day expiry, so a Conversation is storage
 you own and eventually have to delete. Example 08 builds one, reads its items back,
 provokes the 400 you get for sending both mechanisms, and cleans up after itself.
 Read the official
@@ -447,8 +447,8 @@ plain: `store=False` still requires temporary storage while asynchronous work ru
 the official [background-mode guide](https://developers.openai.com/api/docs/guides/background)
 for the current retention rules.
 
-There is still a portability cost. `/v1/chat/completions` is implemented by Ollama, LM
-Studio, vLLM, LiteLLM, and many hosted providers. That is why
+There's still a portability cost. `/v1/chat/completions` is implemented by Ollama, LM
+Studio, vLLM, LiteLLM, and many hosted providers. That's why
 [example 17](examples/17_local_serving.py) can switch to a local model by changing
 `base_url`. The Responses API is OpenAI's endpoint. Use it when its item model, hosted
 tools, or state handling saves real application work. Use Chat Completions when provider
@@ -521,7 +521,7 @@ relevant facts and pasting them into the prompt, which is the smallest thing you
 still call **retrieval-augmented generation (RAG)**. No vector database, no framework.
 Just the embeddings and chat calls you already know, wired together from scratch.
 
-Hold onto one idea. A model can only answer from what is in its context window, and RAG
+Hold onto one idea. A model can only answer from what's in its context window, and RAG
 decides what to put there.
 
 ```bash
@@ -538,7 +538,7 @@ secrun python hands_on/rag.py "How long are deleted notes kept?" --no-rag
 secrun python hands_on/rag.py "What plans are there?" -k 5 --show-prompt
 ```
 
-The knowledge base describes a made-up app, so the model cannot fall back on training
+The knowledge base describes a made-up app, so the model can't fall back on training
 and a correct answer can only come from retrieval. Run it with `--no-rag` and watch the
 model guess or refuse. That contrast is the lesson. The embeddings call and the chat
 call use the same `OPENAI_API_KEY`.
@@ -561,7 +561,7 @@ Further on:
   deep dive of its own.
 - **The context window.** What happens as conversations get long, and smarter ways to
   manage history than the simple trim in example 12, like summarizing old turns and
-  sliding windows. That is a whole dive:
+  sliding windows. That's a whole dive:
   [Context Engineering](https://github.com/alexvervloet/context-engineering-deep-dive).
 - **Vision and audio.** Passing images to multimodal models, and speech-to-text.
 - **Streaming and tools together.** The pattern most production assistants use, built
@@ -570,7 +570,7 @@ Further on:
 
 Every one of these builds on the request, context, output, and usage concepts you met at
 the start. The wire format changes between Chat Completions and Responses. Those four
-concerns do not.
+concerns don't.
 
 ---
 
@@ -598,7 +598,7 @@ at the line.
 ## From teaching code to production
 
 Every example here takes shortcuts that are perfect for learning and wrong for a real
-deployment. Here is the map from each shortcut to what production uses.
+deployment. Here's the map from each shortcut to what production uses.
 
 | This repo's teaching shortcut | In production |
 |-------------------------------|---------------|
@@ -735,4 +735,4 @@ And the whole series lands in one codebase in the
 [capstone](https://github.com/alexvervloet/deep-dive-capstone): a codebase Q&A tool
 built step by step, one tag per dive.
 
-**You are here: #1, OpenAI API.**
+**You're here: #1, OpenAI API.**
