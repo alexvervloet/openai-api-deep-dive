@@ -197,10 +197,11 @@ The image is either a URL the model fetches, or a local file inlined as a base64
 
 <details><summary>▸ Answer</summary>
 
-Reasoning models ignore sampling knobs like `temperature`; you steer how hard they
-think with `reasoning_effort`. The `reasoning_tokens` are the model's **hidden**
-chain of thought, generated before the visible answer and never shown to you, but
-still billed.
+Reasoning models don't take sampling knobs; the GPT-5.6 tiers reject `temperature`
+outright. You steer how hard they think with `reasoning_effort`. The
+`reasoning_tokens` are the model's **hidden** chain of thought, generated before the
+visible answer and never shown to you, but still billed. Note the default on chat
+completions is `"none"`, so a request that doesn't ask gets no reasoning.
 </details>
 
 **Recall (batch, `20_batch_api.py`).** What do you trade to get the Batch API's 50%

@@ -324,7 +324,8 @@ secrun python examples/18_vision.py            # or: secrun python examples/18_v
 The o-series and the GPT-5 reasoning tiers generate hidden reasoning tokens before
 answering, which makes them far better on math, logic, and coding. You drop `temperature`
 and steer with `reasoning_effort` instead. `usage` reports the hidden thinking you still
-pay for.
+pay for. Reasoning is no longer a separate family: the o-series is being switched off
+(o1, o1-pro, and o4-mini on 2026-10-23), and the dial now lives on the mainline tiers.
 ```bash
 secrun python examples/19_reasoning.py
 ```
@@ -652,7 +653,7 @@ examples/
   16_sse.py                 ← SSE protocol: raw events, timing, partial accumulation
   17_local_serving.py       ← same client, local model via base_url (Ollama/llama.cpp)
   18_vision.py              ← send an image (URL or local base64) alongside text
-  19_reasoning.py           ← o-series reasoning models: reasoning_effort, hidden tokens
+  19_reasoning.py           ← reasoning models: reasoning_effort, hidden tokens
   20_batch_api.py           ← submit many requests at 50% off, results within 24h
   21_prompt_caching.py      ← automatic prefix caching; structure prompts to hit it
   22_async_concurrency.py   ← AsyncOpenAI + asyncio.gather + a Semaphore (throughput)
