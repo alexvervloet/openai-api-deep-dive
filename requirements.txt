@@ -2,7 +2,7 @@
 # style, unchanged from v1: the v2 rewrite did not touch anything this repo uses.
 # The upper bound is there so a future major release cannot land silently, which
 # is exactly how the MCP dive broke in July 2026.
-openai>=2.0,<3
+openai>=3.0,<4
 
 # tiktoken is OpenAI's tokenizer. We use it to count tokens *before* sending a
 # request, so we can estimate cost and avoid surprises.
