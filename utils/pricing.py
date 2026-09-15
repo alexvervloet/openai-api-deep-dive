@@ -9,7 +9,7 @@ than input tokens, which is why a chatty model can cost more than you expect.
 Prices are quoted per 1,000,000 tokens. We store them that way below and divide
 when we estimate.
 
-PRICES CHANGE. The numbers below are a snapshot (checked 2026-08-08) and may be
+PRICES CHANGE. The numbers below are a snapshot (checked 2026-09-15) and may be
     out of date by the time you read this. Always confirm against the official
     pricing page:
         https://developers.openai.com/api/docs/pricing
@@ -27,18 +27,22 @@ class ModelPrice:
 
 
 # A small, representative slice of the catalog. Add more as you explore.
-# Verified against the pricing page on 2026-08-08. (input $/1M, output $/1M)
+# Verified against the pricing page on 2026-09-15. (input $/1M, output $/1M)
 #
 # Read the shape of this table, not just the numbers. Each generation has a
 # flagship, a mid tier, and a cheap tier, and the spread between them is roughly
 # 25x. Picking the right tier for a task saves far more than any prompt tweak.
 PRICING: dict[str, ModelPrice] = {
     # Current generation.
-    "gpt-5.6-sol":     ModelPrice(input_per_1m=5.00, output_per_1m=30.00),
+    "gpt-6-astra":     ModelPrice(input_per_1m=10.00, output_per_1m=50.00),
+    # Sol's $4/$20 is promotional through at least 2026-11-21; it was $5/$30.
+    "gpt-5.6-sol":     ModelPrice(input_per_1m=4.00, output_per_1m=20.00),
     "gpt-5.6-terra":   ModelPrice(input_per_1m=2.00, output_per_1m=12.00),
     "gpt-5.6-luna":    ModelPrice(input_per_1m=0.20, output_per_1m=1.20),
+    "gpt-5.5":         ModelPrice(input_per_1m=5.00, output_per_1m=30.00),
     # The 5.4 line, which this repo defaults to. See the note in README on why
     # a slightly older line is the better teaching default.
+    "gpt-5.4":         ModelPrice(input_per_1m=2.50, output_per_1m=15.00),
     "gpt-5.4-mini":    ModelPrice(input_per_1m=0.75, output_per_1m=4.50),
     "gpt-5.4-nano":    ModelPrice(input_per_1m=0.20, output_per_1m=1.25),
     "gpt-5-mini":      ModelPrice(input_per_1m=0.25, output_per_1m=2.00),
