@@ -37,7 +37,8 @@ if not os.getenv("OPENAI_API_KEY"):
 client = OpenAI()
 
 stream = client.chat.completions.create(
-    model="gpt-5.4-nano",
+    model="gpt-6-luna",
+    reasoning_effort="none",  # see example 01
     messages=[{"role": "user", "content": "Write a haiku about streaming data."}],
     stream=True,
     stream_options={"include_usage": True},
