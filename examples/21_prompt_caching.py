@@ -50,7 +50,8 @@ STABLE_PREFIX = (
 def ask(question: str):
     """Same long system prefix every time; only the question changes."""
     resp = client.chat.completions.create(
-        model="gpt-5.4-nano",
+        model="gpt-6-luna",
+        reasoning_effort="none",  # see example 01
         messages=[
             {"role": "system", "content": STABLE_PREFIX},  # constant -> cacheable
             {"role": "user", "content": question},          # variable -> at the end
