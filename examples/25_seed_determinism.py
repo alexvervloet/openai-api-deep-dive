@@ -51,7 +51,8 @@ TEMPERATURE = 0.9  # real randomness, so a fixed seed's effect is actually visib
 
 def generate(seed=None):
     resp = client.chat.completions.create(
-        model="gpt-5.4-nano",
+        model="gpt-6-luna",
+        reasoning_effort="none",  # see example 01
         messages=[{"role": "user", "content": PROMPT}],
         temperature=TEMPERATURE,
         seed=seed,
