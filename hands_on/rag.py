@@ -61,6 +61,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from dotenv import load_dotenv
 
+from utils.models import reasoning_off
 from utils.pricing import estimate_cost, estimate_embedding_cost, format_cost
 
 # --- The "knowledge base": a few short, made-up facts about a fictional app. ---
@@ -80,7 +81,7 @@ KNOWLEDGE_BASE = [
 DEMO_QUESTION = "How long do I have to recover a note I deleted?"
 
 EMBED_MODEL = "text-embedding-3-small"
-CHAT_MODEL = "gpt-5.4-nano"
+CHAT_MODEL = "gpt-6-luna"
 
 # The grounding instruction. This is what keeps a RAG system honest: answer from
 # the supplied context, and admit ignorance rather than inventing facts.
@@ -213,7 +214,9 @@ def main(argv: list[str]) -> int:
             print(f"[{m['role']}] {m['content']}\n")
         print("----------------------------------\n")
 
-    response = client.chat.completions.create(model=args.model, messages=messages)
+    response = client.chat.completions.create(
+        model=args.model, messages=messages, **reasoning_off(args.model)  # see utils/models.py
+    )
     choice = response.choices[0]
 
     print("=" * 70)
