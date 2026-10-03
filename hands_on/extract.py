@@ -45,6 +45,7 @@ from rich.console import Console
 from rich.markdown import Markdown
 from rich.table import Table
 
+from utils.models import reasoning_off
 from utils.pricing import estimate_cost, format_cost
 from utils.tokens import count_message_tokens
 
@@ -98,8 +99,8 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
     parser.add_argument("file", help="Path to the free-form text to extract from.")
     parser.add_argument(
         "--model",
-        default="gpt-5.4-nano",
-        help="Model to use (default: gpt-5.4-nano, the cheap workhorse).",
+        default="gpt-6-luna",
+        help="Model to use (default: gpt-6-luna, the cheap workhorse).",
     )
     parser.add_argument(
         "--json",
@@ -194,6 +195,7 @@ def main(argv: list[str]) -> int:
         model=args.model,
         messages=messages,  # type: ignore[arg-type]
         response_format=Extraction,
+        **reasoning_off(args.model),  # see utils/models.py
     )
     message = response.choices[0].message
 
