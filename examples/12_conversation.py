@@ -80,7 +80,8 @@ while True:
 
     # 2. Send the ENTIRE history every time. That's what gives the model context.
     response = client.chat.completions.create(
-        model="gpt-5.4-nano",
+        model="gpt-6-luna",
+        reasoning_effort="none",  # see example 01
         messages=messages,
     )
     reply = response.choices[0].message.content or ""
