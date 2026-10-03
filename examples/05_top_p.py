@@ -35,7 +35,8 @@ prompt = "Name an unusual but real animal."
 
 for p in (0.1, 1.0):
     response = client.chat.completions.create(
-        model="gpt-5.4-nano",
+        model="gpt-6-luna",
+        reasoning_effort="none",  # see example 01
         messages=[{"role": "user", "content": prompt}],
         top_p=p,
         # We leave temperature at its default and only vary top_p here.
