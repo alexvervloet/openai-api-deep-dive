@@ -72,7 +72,8 @@ messages: list[ChatCompletionMessageParam] = [
 
 # First call: the model decides it needs the tool.
 first = client.chat.completions.create(
-    model="gpt-5.4-nano",
+    model="gpt-6-luna",
+    reasoning_effort="none",  # see example 01
     messages=messages,
     tools=tools,
 )
@@ -104,7 +105,8 @@ for call in reply.tool_calls or []:
 
 # Second call: the model now has the data and writes the final answer.
 second = client.chat.completions.create(
-    model="gpt-5.4-nano",
+    model="gpt-6-luna",
+    reasoning_effort="none",  # see example 01
     messages=messages,
     tools=tools,
 )
