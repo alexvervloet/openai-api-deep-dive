@@ -27,21 +27,24 @@ class ModelPrice:
 
 
 # A small, representative slice of the catalog. Add more as you explore.
-# Verified against the pricing page on 2026-09-15. (input $/1M, output $/1M)
+# Verified against the pricing page on 2026-10-03. (input $/1M, output $/1M)
 #
 # Read the shape of this table, not just the numbers. Each generation has a
 # flagship, a mid tier, and a cheap tier, and the spread between them is roughly
 # 25x. Picking the right tier for a task saves far more than any prompt tweak.
 PRICING: dict[str, ModelPrice] = {
-    # Current generation.
+    # Current generation. gpt-6-luna is this repo's default.
     "gpt-6-astra":     ModelPrice(input_per_1m=10.00, output_per_1m=50.00),
+    "gpt-6.1-sol":     ModelPrice(input_per_1m=2.00, output_per_1m=10.00),
+    "gpt-6-sol":       ModelPrice(input_per_1m=2.00, output_per_1m=10.00),
+    "gpt-6-luna":      ModelPrice(input_per_1m=0.10, output_per_1m=0.50),
     # Sol's $4/$20 is promotional through at least 2026-11-21; it was $5/$30.
     "gpt-5.6-sol":     ModelPrice(input_per_1m=4.00, output_per_1m=20.00),
     "gpt-5.6-terra":   ModelPrice(input_per_1m=2.00, output_per_1m=12.00),
     "gpt-5.6-luna":    ModelPrice(input_per_1m=0.20, output_per_1m=1.20),
     "gpt-5.5":         ModelPrice(input_per_1m=5.00, output_per_1m=30.00),
-    # The 5.4 line, which this repo defaults to. See the note in README on why
-    # a slightly older line is the better teaching default.
+    # The 5.4 line, the repo's previous default. gpt-5.4-nano is deprecated and
+    # shuts down 2027-04-01; gpt-6-luna replaces it at half the price.
     "gpt-5.4":         ModelPrice(input_per_1m=2.50, output_per_1m=15.00),
     "gpt-5.4-mini":    ModelPrice(input_per_1m=0.75, output_per_1m=4.50),
     "gpt-5.4-nano":    ModelPrice(input_per_1m=0.20, output_per_1m=1.25),
@@ -105,7 +108,7 @@ def format_cost(usd: float) -> str:
 
 if __name__ == "__main__":
     # Run `python utils/pricing.py` for a quick demo / sanity check.
-    demo_model = "gpt-5.4-nano"
+    demo_model = "gpt-6-luna"
     cost = estimate_cost(demo_model, input_tokens=1_000, output_tokens=500)
     print(f"{demo_model}: 1,000 in + 500 out  ->  {format_cost(cost)}")
 
