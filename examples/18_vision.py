@@ -37,9 +37,11 @@ if not os.getenv("OPENAI_API_KEY"):
 
 client = OpenAI()
 
-# A stable, public sample image (OpenAI's own docs use this one): a wooden
-# boardwalk crossing a green marsh under a blue sky.
-SAMPLE_URL = "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Gfp-wisconsin-madison-the-nature-boardwalk.jpg/640px-Gfp-wisconsin-madison-the-nature-boardwalk.jpg"
+# A public sample image: a tabby cat on a stone wall, a Wikimedia Commons
+# featured picture. The 1,795px original is big on purpose; with detail "high"
+# it costs about 3,000 tokens. (The boardwalk photo this used to point at, the
+# one in OpenAI's docs, was deleted from Commons, and the URL now returns 400.)
+SAMPLE_URL = "https://upload.wikimedia.org/wikipedia/commons/4/4d/Cat_November_2010-1a.jpg"
 
 
 def image_part_from_path(path: str) -> dict:
