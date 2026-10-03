@@ -49,7 +49,8 @@ client = OpenAI()
 
 def confidence(question: str):
     resp = client.chat.completions.create(
-        model="gpt-5.4-nano",
+        model="gpt-6-luna",
+        reasoning_effort="none",  # see example 01
         messages=[
             {"role": "system", "content": "Answer with exactly one word: Yes or No."},
             {"role": "user", "content": question},
