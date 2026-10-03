@@ -73,7 +73,8 @@ def average(numbers):
 
 # 2. Pass the MODEL CLASS as response_format. No schema dict, no json.loads.
 response = client.chat.completions.parse(
-    model="gpt-5.4-nano",
+    model="gpt-6-luna",
+    reasoning_effort="none",  # see example 01
     messages=[
         {"role": "system", "content": "You are a meticulous code reviewer."},
         {"role": "user", "content": f"Review this code:\n```\n{code}\n```"},
