@@ -63,17 +63,19 @@ shape of every call you'll ever make is right there:
 
 ```python
 response = client.chat.completions.create(
-    model="gpt-5.4-nano",
+    model="gpt-6-luna",
+    reasoning_effort="none",
     messages=[{"role": "user", "content": "In one sentence, what is an API?"}],
 )
 print(response.choices[0].message.content)
 ```
 
-Four things to internalize:
+Five things to internalize:
 
 | Thing | What it is |
 |-------|-----------|
-| `model` | Which model answers. `gpt-5.4-nano` is the cheap, fast default. |
+| `model` | Which model answers. `gpt-6-luna` is the cheap, fast default. |
+| `reasoning_effort` | How long the model thinks before it answers. Luna defaults to `"medium"`, and at anything above `"none"` it rejects `temperature` and function tools here. The examples send `"none"`; [Reasoning models](#reasoning-models-which-think-first-and-answer-second) turns it back up. |
 | `messages` | A list of messages, your half of the conversation. |
 | `response.choices[0].message.content` | The model's reply text. |
 | `response.usage` | Exactly how many tokens you were billed for. |
@@ -314,18 +316,22 @@ secrun python examples/17_local_serving.py    # needs a local runtime; prints ho
 ### Vision, sending images alongside text
 Multimodal models accept images in the same message. The user `content` becomes a list
 of parts, text plus `image_url`, where the image is either a URL or a local file inlined
-as a base64 `data:` URI. Images are billed as tokens, scaled by pixel size. The example
-reads a public sample image, or your own local file.
+as a base64 `data:` URI. Images are billed as tokens, scaled by pixel size. Set `detail`
+yourself: on luna the default (`"auto"`) doesn't shrink large images, so a 3000x3000
+photo costs about 3.5 times what `"high"` charges. The example reads a public sample
+image, or your own local file.
 ```bash
 secrun python examples/18_vision.py            # or: secrun python examples/18_vision.py my_image.png
 ```
 
 ### Reasoning models, which think first and answer second
-The o-series and the GPT-5 reasoning tiers generate hidden reasoning tokens before
-answering, which makes them far better on math, logic, and coding. You drop `temperature`
-and steer with `reasoning_effort` instead. `usage` reports the hidden thinking you still
-pay for. Reasoning is no longer a separate family: the o-series is being switched off
-(o1, o1-pro, and o4-mini on 2026-10-23), and the dial now lives on the mainline tiers.
+Reasoning models generate hidden reasoning tokens before answering, which makes them far
+better on math, logic, and coding. You drop `temperature` and steer with
+`reasoning_effort` instead. `usage` reports the hidden thinking you still pay for.
+Reasoning is no longer a separate family: the o-series is being switched off (o1, o1-pro,
+and o4-mini on 2026-10-23), and the dial now lives on the mainline tiers. The example runs
+on `gpt-6-luna`, the same model as every other lesson, with the dial at `"high"` instead
+of `"none"`.
 ```bash
 secrun python examples/19_reasoning.py
 ```
