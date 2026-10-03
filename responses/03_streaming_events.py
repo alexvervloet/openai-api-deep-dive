@@ -31,14 +31,21 @@ from openai.types.responses import (
     ResponseUsage,
 )
 
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from utils.models import responses_reasoning_off  # noqa: E402
+
 load_dotenv()
 if not os.getenv("OPENAI_API_KEY"):
     sys.exit("Set OPENAI_API_KEY via secrun (see ../docs/SECRETS.md) and try again.")
 
-MODEL = os.getenv("OPENAI_MODEL", "gpt-5.4-nano")
+MODEL = os.getenv("OPENAI_MODEL", "gpt-6-luna")
+# Luna reasons by default. Turn that off so these lessons match the chat
+# examples; the helper skips models that reject "none" (see utils/models.py).
+REASONING = responses_reasoning_off(MODEL)
 client = OpenAI()
 
 stream = client.responses.create(
+    **REASONING,
     model=MODEL,
     instructions="Explain the idea in three short sentences.",
     input="Why should a streaming client switch on event type?",
