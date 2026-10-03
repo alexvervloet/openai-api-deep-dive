@@ -11,29 +11,32 @@ Reasoning used to be a separate family of models, the o-series (o1, o3,
 o4-mini). It isn't any more. It's a dial on the mainline models, and the
 o-series is being switched off: o1, o1-pro, and o4-mini shut down on
 2026-10-23, and the 2025 o3 snapshots on 2026-12-11. So this example runs on
-gpt-5.6-luna, a current tier that costs about the same as the series default.
+gpt-6-luna, the same model every other example in this repo uses. The only
+difference is where the dial sits.
 
 Three things change about the request:
 
-  1. You don't set `temperature`/`top_p`; the GPT-5.6 tiers reject them outright.
-     You steer effort with `reasoning_effort` instead ("none" | "low" | "medium"
-     | "high" | "xhigh"): more effort = more thinking tokens = better on hard
-     problems, slower and pricier.
+  1. You don't set `temperature`/`top_p`; luna rejects them at any effort above
+     "none". You steer with `reasoning_effort` instead ("none" | "low" |
+     "medium" | "high" | "xhigh" | "max"): more effort = more thinking tokens =
+     better on hard problems, slower and pricier.
   2. The system role is called `developer` (system still works, but `developer`
      is the modern name for these models).
   3. `usage` now reports `reasoning_tokens`: hidden thinking you still pay for
      under `completion_tokens_details`.
 
-Note the default. On chat completions, GPT-5.6 defaults `reasoning_effort` to
-"none", so a request that says nothing gets no reasoning at all. You have to ask.
+Note the default. Luna defaults `reasoning_effort` to "medium", so a request
+that says nothing still thinks, and you pay for it. That's why every other
+example here sends "none" explicitly. The GPT-5.6 tiers went the other way and
+default to "none", so check the default per model rather than per family.
 
-One sharp edge worth knowing before you build on this: on chat completions the
-GPT-5.6 tiers reject function tools combined with any `reasoning_effort` above
-"none". A 400, not a degraded answer. Tools plus reasoning is a Responses API
-job, which is what `responses/04_custom_tool_loop.py` is for.
+One sharp edge worth knowing before you build on this: on chat completions luna
+rejects function tools combined with any `reasoning_effort` above "none". A
+400, not a degraded answer. Tools plus reasoning is a Responses API job, which
+is what `responses/04_custom_tool_loop.py` is for.
 
-Use a reasoning model when the task is genuinely hard; a normal model like
-gpt-5.4-nano is cheaper and faster for everyday requests.
+Use reasoning when the task is genuinely hard. For everyday requests the same
+model at "none" is cheaper and faster.
 
 Run it:
 
@@ -52,9 +55,9 @@ if not os.getenv("OPENAI_API_KEY"):
 
 client = OpenAI()
 
-# Override with REASONING_MODEL in .env to try another tier (gpt-5.6-terra,
-# gpt-5.6-sol, gpt-6-astra, ...). Anything on the GPT-5.6 line or later works.
-MODEL = os.getenv("REASONING_MODEL", "gpt-5.6-luna")
+# Override with REASONING_MODEL in .env to try another tier (gpt-6-sol,
+# gpt-5.6-terra, gpt-6-astra, ...). Anything on the GPT-5.6 line or later works.
+MODEL = os.getenv("REASONING_MODEL", "gpt-6-luna")
 
 # A puzzle that rewards working step-by-step rather than blurting an answer.
 PROBLEM = (
