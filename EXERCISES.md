@@ -112,7 +112,7 @@ and why might code cost more than prose?
 ## Section 6: Cost **(offline)**
 
 **Predict.** A request is 2,000 input tokens and 500 output tokens. Using the
-prices in `utils/pricing.py`, will it cost more on `gpt-5.4-nano` or `gpt-4o`?
+prices in `utils/pricing.py`, will it cost more on `gpt-6-luna` or `gpt-4o`?
 Roughly how many times more?
 
 <details><summary>▸ Answer</summary>
@@ -197,11 +197,13 @@ The image is either a URL the model fetches, or a local file inlined as a base64
 
 <details><summary>▸ Answer</summary>
 
-Reasoning models don't take sampling knobs; the GPT-5.6 tiers reject `temperature`
-outright. You steer how hard they think with `reasoning_effort`. The
+While a model is reasoning it doesn't take sampling knobs; luna rejects `temperature`
+at any effort above `"none"`. You steer how hard it thinks with `reasoning_effort`. The
 `reasoning_tokens` are the model's **hidden** chain of thought, generated before the
-visible answer and never shown to you, but still billed. Note the default on chat
-completions is `"none"`, so a request that doesn't ask gets no reasoning.
+visible answer and never shown to you, but still billed. Note the default: luna starts
+at `"medium"`, so a request that doesn't ask still reasons. That's why every other
+example sends `"none"`. The GPT-5.6 tiers default to `"none"` instead, so check per
+model.
 </details>
 
 **Recall (batch, `20_batch_api.py`).** What do you trade to get the Batch API's 50%
