@@ -38,6 +38,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from dotenv import load_dotenv
 
+from utils.models import reasoning_off
 from utils.pricing import estimate_cost, format_cost
 from utils.tokens import count_message_tokens
 
@@ -82,8 +83,8 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
 
     parser.add_argument(
         "--model",
-        default="gpt-5.4-nano",
-        help="Model to use (default: gpt-5.4-nano, the cheap workhorse).",
+        default="gpt-6-luna",
+        help="Model to use (default: gpt-6-luna, the cheap workhorse).",
     )
     parser.add_argument(
         "--system",
@@ -194,6 +195,9 @@ def main(argv: list[str]) -> int:
         "model": args.model,
         "messages": messages,
         "temperature": args.temperature,
+        # Luna rejects temperature unless reasoning is off. reasoning_off() sends
+        # "none" only to models that accept it, so --model gpt-4o still works.
+        **reasoning_off(args.model),
     }
     if args.top_p is not None:
         request["top_p"] = args.top_p
@@ -203,10 +207,10 @@ def main(argv: list[str]) -> int:
         # old max_tokens name outright.
         request["max_completion_tokens"] = args.max_tokens
     if args.stop is not None:
-        # `stop` is not supported on the gpt-5 line (see examples/06). Rather
+        # `stop` is not supported on gpt-5 or gpt-6 (see examples/06). Rather
         # than let the API 400 on a flag the user deliberately passed, say so
         # and carry on without it.
-        if args.model.startswith("gpt-5"):
+        if args.model.startswith(("gpt-5", "gpt-6")):
             print(
                 f"note: --stop is not supported on {args.model} and will be ignored.\n"
                 f"      Use --max-tokens for a length cap, or a JSON schema for a shape.",
