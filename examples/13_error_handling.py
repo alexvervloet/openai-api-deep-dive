@@ -38,6 +38,9 @@ import openai
 from dotenv import load_dotenv
 from openai import OpenAI
 
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from utils.models import reasoning_off  # noqa: E402
+
 load_dotenv()
 if not os.getenv("OPENAI_API_KEY"):
     sys.exit("Set OPENAI_API_KEY via secrun (see ../docs/SECRETS.md) and try again.")
@@ -57,6 +60,9 @@ def ask(model: str, question: str) -> str | None:
     try:
         response = client.chat.completions.create(
             model=model,
+            # Only send reasoning_effort where it's accepted, so the made-up model
+            # below still fails with the 404 this lesson is about, not a 400.
+            **reasoning_off(model),
             messages=[{"role": "user", "content": question}],
         )
         return response.choices[0].message.content
@@ -97,6 +103,6 @@ ask("gpt-4o-mini-does-not-exist", "Hello?")
 
 # 2. A normal request that succeeds, using the tuned client.
 print("\n--- a normal request ---")
-answer = ask("gpt-5.4-nano", "In one sentence, why is retry logic important?")
+answer = ask("gpt-6-luna", "In one sentence, why is retry logic important?")
 if answer:
     print(answer)
