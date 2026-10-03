@@ -44,7 +44,8 @@ messages: list[ChatCompletionMessageParam] = [
 ]
 
 response = client.chat.completions.create(
-    model="gpt-5.4-nano",
+    model="gpt-6-luna",
+    reasoning_effort="none",  # see example 01
     messages=messages,
 )
 
