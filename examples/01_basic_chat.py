@@ -13,6 +13,10 @@ What to notice:
   - The reply lives at `response.choices[0].message.content`. There can be more
     than one choice if you ask for several (the `n` parameter), hence the [0].
   - `response.usage` reports exactly how many tokens you were billed for.
+  - `reasoning_effort="none"` turns off the model's hidden thinking step.
+    gpt-6-luna thinks by default, and while it does, it rejects `temperature`
+    and function tools on this endpoint. Every example in this repo sends
+    "none" so those lessons work; example 19 turns the dial back up.
 """
 
 import os
@@ -28,7 +32,8 @@ if not os.getenv("OPENAI_API_KEY"):
 client = OpenAI()
 
 response = client.chat.completions.create(
-    model="gpt-5.4-nano",
+    model="gpt-6-luna",
+    reasoning_effort="none",
     messages=[
         {"role": "user", "content": "In one sentence, what is an API?"},
     ],
