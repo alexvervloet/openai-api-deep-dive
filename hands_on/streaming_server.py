@@ -73,6 +73,8 @@ from fastapi.responses import FileResponse, StreamingResponse  # type: ignore[im
 from openai import AsyncOpenAI
 from pydantic import BaseModel
 
+from utils.models import reasoning_off
+
 load_dotenv()
 if not os.getenv("OPENAI_API_KEY"):
     sys.exit("Set OPENAI_API_KEY via secrun (see ../docs/SECRETS.md) and try again.")
@@ -95,7 +97,7 @@ STATIC_DIR = Path(__file__).parent / "static"
 
 class StreamRequest(BaseModel):
     prompt: str
-    model: str = "gpt-5.4-nano"
+    model: str = "gpt-6-luna"
     max_tokens: int = 1024
 
 
@@ -161,6 +163,7 @@ async def _stream_tokens(request: Request, body: StreamRequest):
                 messages=[{"role": "user", "content": body.prompt}],
                 max_completion_tokens=body.max_tokens,
                 stream=True,
+                **reasoning_off(body.model),  # see utils/models.py
             )
             break
         except (openai.RateLimitError, openai.APIConnectionError) as exc:
