@@ -71,16 +71,25 @@ else:
     print("[sending a public sample image by URL]\n")
 
 # The one new idea: `content` is a LIST of parts (text + image), not a string.
-# `detail` can be "low" (cheaper, ~85 tokens, coarse), "high" (more tiles, more
-# detail, more tokens), or "auto" (the default).
+#
+# `detail` decides how much of the image the model sees, and what you pay. Luna
+# bills about 1.2 tokens per 32x32-pixel patch. Measured on 2026-10-03:
+#   "low"   at most 307 tokens, whatever the size (19 for a 100x100 icon).
+#   "high"  shrinks big images to fit, so at most 3,000 tokens.
+#   "auto"  the default if you leave it out. On luna it does NOT shrink: a
+#           3000x3000 photo cost 10,603 tokens, and very large images get a 400.
+#           gpt-5.4-nano treated "auto" like "high" and charged 3,000 for the
+#           same photo, so the cheaper model is the pricier one for big images.
+# Set `detail` on purpose rather than inheriting a default that changed.
 response = client.chat.completions.create(
-    model="gpt-5.4-nano",  # the -mini models are multimodal too
+    model="gpt-6-luna",
+    reasoning_effort="none",  # see example 01
     messages=[
         {  # type: ignore[arg-type]
             "role": "user",
             "content": [
                 {"type": "text", "text": "Describe this image in two sentences. What stands out?"},
-                {**image_part, "image_url": {**image_part["image_url"], "detail": "auto"}},
+                {**image_part, "image_url": {**image_part["image_url"], "detail": "high"}},
             ],
         }
     ],
