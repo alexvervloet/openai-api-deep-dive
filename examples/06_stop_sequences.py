@@ -11,8 +11,9 @@ It was used to:
   - keep the model from running past a known boundary (e.g. "\\n\\n").
 
 THE POINT OF THIS EXAMPLE HAS CHANGED
-    `stop` is not supported on the gpt-5 line. Every gpt-5 model tested on
-    2026-08-08 (nano, mini, and the 5.6 tiers) rejects it:
+    `stop` is not supported on the gpt-5 line or on gpt-6-luna. Every gpt-5
+    model tested on 2026-08-08 (nano, mini, and the 5.6 tiers) rejects it, and
+    so did luna on 2026-10-03, even with reasoning switched off:
 
         Unsupported parameter: 'stop' is not supported with this model.
 
@@ -55,7 +56,7 @@ if not os.getenv("OPENAI_API_KEY"):
 
 client = OpenAI()
 
-CURRENT_MODEL = "gpt-5.4-nano"   # what the rest of this repo uses
+CURRENT_MODEL = "gpt-6-luna"     # what the rest of this repo uses
 LEGACY_MODEL = "gpt-4o-mini"     # still served, still accepts `stop`
 
 prompt = "Count from 1 to 10, one number per line, like '1.', '2.', ..."
@@ -66,6 +67,7 @@ print(f"--- {CURRENT_MODEL} with stop=['4.'] ---")
 try:
     client.chat.completions.create(
         model=CURRENT_MODEL,
+        reasoning_effort="none",  # see example 01
         messages=[{"role": "user", "content": prompt}],
         max_completion_tokens=200,
         stop=["4."],
@@ -90,6 +92,7 @@ print(f"(finish_reason={r.choices[0].finish_reason})")
 print(f"\n--- {CURRENT_MODEL}, asking for a shape instead ---")
 r2 = client.chat.completions.create(
     model=CURRENT_MODEL,
+    reasoning_effort="none",
     messages=[{"role": "user", "content": "Count from 1 to 3 as JSON."}],
     max_completion_tokens=200,
     response_format={
