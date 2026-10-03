@@ -59,7 +59,8 @@ def create_batch() -> str:
             "method": "POST",
             "url": "/v1/chat/completions",
             "body": {
-                "model": "gpt-5.4-nano",
+                "model": "gpt-6-luna",
+                "reasoning_effort": "none",
                 "messages": [{"role": "user", "content": prompt}],
                 "max_completion_tokens": 20,
             },
