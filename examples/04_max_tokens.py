@@ -52,7 +52,8 @@ prompt = "Explain how the internet works."
 # the loop. But remember larger numbers incur more cost.
 for cap in (16, 256):
     response = client.chat.completions.create(
-        model="gpt-5.4-nano",
+        model="gpt-6-luna",
+        reasoning_effort="none",  # see example 01
         messages=[{"role": "user", "content": prompt}],
         max_completion_tokens=cap,
     )
