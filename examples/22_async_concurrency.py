@@ -44,7 +44,8 @@ async def summarize(topic: str, sem: asyncio.Semaphore) -> str:
     """One request, gated by a semaphore so only N run at a time."""
     async with sem:  # acquire a slot; block here if N are already in flight
         resp = await client.chat.completions.create(
-            model="gpt-5.4-nano",
+            model="gpt-6-luna",
+            reasoning_effort="none",  # see example 01
             messages=[{"role": "user", "content": f"Explain {topic} in one short sentence."}],
             max_completion_tokens=40,
         )
