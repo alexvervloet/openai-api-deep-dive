@@ -593,7 +593,7 @@ rest, sorted by the error you see:
 | `AuthenticationError` / 401 | The key is present but wrong: expired, revoked, or a typo. Make a fresh one at the [API keys page](https://platform.openai.com/api-keys). |
 | `RateLimitError` / 429 | Too many requests, or you're out of credit. Wait a moment, or check your billing/usage in the dashboard. |
 | `NotFoundError` / 404 about the model | A model name was mistyped or your account can't access it. The examples use widely-available IDs; if you changed one, check it against the [models list](https://platform.openai.com/docs/models). |
-| `SyntaxError` or odd type errors on startup | You're likely on Python 3.9 or older. This repo needs 3.10+; `check_setup.py` will confirm your version. |
+| `SyntaxError` or odd type errors on startup | You're likely on Python 3.10 or older. This repo needs 3.11+; `check_setup.py` will confirm your version. |
 | It "hangs" with no output | Some examples stream, others wait for the full reply before printing. Give it a few seconds; for streaming examples you'll see text appear word by word. |
 
 Still stuck? Every example is small and self-contained. Open the file, read the
