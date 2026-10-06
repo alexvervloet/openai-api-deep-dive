@@ -48,6 +48,7 @@ PRICING: dict[str, ModelPrice] = {
     "gpt-5.4":         ModelPrice(input_per_1m=2.50, output_per_1m=15.00),
     "gpt-5.4-mini":    ModelPrice(input_per_1m=0.75, output_per_1m=4.50),
     "gpt-5.4-nano":    ModelPrice(input_per_1m=0.20, output_per_1m=1.25),
+    # The original GPT-5 small tiers: their only snapshots shut down 2026-12-11.
     "gpt-5-mini":      ModelPrice(input_per_1m=0.25, output_per_1m=2.00),
     "gpt-5-nano":      ModelPrice(input_per_1m=0.05, output_per_1m=0.40),
     # Previous generation, still served. Useful for the cost comparison above.
